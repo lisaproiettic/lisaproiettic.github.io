@@ -34,10 +34,20 @@
         <div class="box">
             <h3>Calcolo della Toy Public Key Q = kG</h3>
             <p><strong>Punto Base (G):</strong> (1, 5)<br>
-            <strong>Chiave Privata (k):</strong>6</p>
+            <strong>Chiave Privata (k):</strong> 6</p>
 
             <h4>Risultati step-by-step:</h4>
             <pre id="output"></pre>
+        </div>
+
+        <div class="box">
+            <h2>Esplorazione Statistica e Proprietà Crittografiche</h2>
+            <ul>
+                <li><strong>One-Way Function (ECDLP):</strong> Calcolare $Q = kG$ richiede pochi passaggi di addizione e raddoppio. Ricavare la chiave privata $k$ partendo solo da $Q$ e $G$ è computazionalmente intrattabile su campi di grandi dimensioni (Problema del logaritmo Discreto).</li>
+                <li><strong>Distribuzione e Uniformità:</strong> I punti della curva generato su un campo finito $\mathbb{Z}_p$ appaiono distribuiti in modo pseudocasuale nello spazio discreto delle coordinate.</li>
+                <li><strong>Effetto Valanga (Avalanche Effect):</strong> Modificare anche solo di 1 unità la chiave privata $k$ (es: da 6 a 7) modifica radicalmente le coordinate del punto risultante $Q$.</li>
+                <li><strong>Differenza con le funzioni Hash:</strong> La moltiplicazione scalare mantiene la struttura algebrica di gruppo omomorfo ($aG + bG = (a+b)G$), fondamentale per la verifica delle firme digitali. Le funzioni Hash distruggono del tutto questa struttura.</li>
+            </ul>
         </div>
 
         <script>
@@ -51,8 +61,20 @@
             };
 
             function pointAdd(P1, P2){
-                let num = (P1.x === P2.x && P1.y === P2.y) ? (3 * P1.x * P1.x + a) : (P2.y - P1.y);
-                let den = (P1.x === P2.x && P1.y === P2.y) ? (2*P1.y) : (P2.x - P1.x);
+                if (!P1) return P2;
+                if (!P2) return P1;
+
+                let num, den;
+                if (P1.x === P2.x && P1.y === P2.y){
+                    num = 3 * P1.x * P1.x + a;
+                    den = 2 * P1.y;
+                } else if (P1.x === P2.x){
+                    return null;
+                } else {
+                    num = P2.y - P1.y;
+                    den = P2.x - P1.x;
+                }
+
                 let l = (((num * modInv(den, p)) % p) + p) % p;
                 let x3 = (((l * l - P1.x - P2.x) % p) + p) % p;
                 let y3 = (((l * (P1.x - x3) - P1.y) % p ) + p) % p;
@@ -60,12 +82,12 @@
             }
 
             let Q = G;
-            let out = '1G = (${Q.x}, ${Q.y})\n';
+            let out = `1G = (${Q.x}, ${Q.y})\n`;
             for (let i = 2; i <= k; i++) {
                 Q = pointAdd(Q, G);
-                out += '${i}G = (${Q.x}, ${Q.y})\n';
+                out += `${i}G = (${Q.x}, ${Q.y})\n`;
             }
-            out += '\nTOY PUBLIC KEY (Q = ${k}G): (${Q.x}, ${Q.y})';
+            out += `\nTOY PUBLIC KEY (Q = ${k}G): (${Q.x}, ${Q.y})`;
 
             document.getElementById("output").textContent = out;
         </script>
