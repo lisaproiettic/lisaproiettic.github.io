@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html lang="it">
+    <head>
+        <meta charset="UTF-8">
+        <title>Homework 1 - Toy Elliptic Curve</title>
+        <style>
+            body {
+                font-family: 'Courier New', Courier, monospace;
+                margin: 40px;
+                background-color: #f4f6f9;
+                color: #333;
+            }
+            h1 { color: #003366; }
+            .box {
+                background: white;
+                padding: 20px;
+                border-radius: 8px;
+                box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+                max-width: 600px;
+            }
+            pre {
+                background: #eee;
+                padding: 15px;
+                border-radius: 4px;
+                font-size: 14px;
+            }
+        </style>
+    </head>
+    <body>
+
+        <h1>Homework 1: Public-Key Cryptography</h1>
+        <p>Simulazione dell'algoritmo su curva ellittica giocattolo: <code>y² = x³ + 7 (mod 17)</code></p>
+
+        <div class="box">
+            <h3>Calcolo della Toy Public Key Q = kG</h3>
+            <p><strong>Punto Base (G):</strong> (1, 5)<br>
+            <strong>Chiave Privata (k):</strong>6</p>
+
+            <h4>Risultati step-by-step:</h4>
+            <pre id="output"></pre>
+        </div>
+
+        <script>
+            const p = 17, a = 0;
+            const G = {x: 1, y: 5};
+            const k = 6;
+
+            const modInv = (n, m) => {
+                n = ((n % m) + m) % m;
+                for (let x = 1; x < m; x++) if ((n * x) % m === 1) return x;
+            };
+
+            function pointAdd(P1, P2){
+                let num = (P1.x === P2.x && P1.y === P2.y) ? (3 * P1.x * P1.x + a) : (P2.y - P1.y);
+                let den = (P1.x === P2.x && P1.y === P2.y) ? (2*P1.y) : (P2.x - P1.x);
+                let l = (((num * modInv(den, p)) % p) + p) % p;
+                let x3 = (((l * l - P1.x - P2.x) % p) + p) % p;
+                let y3 = (((l * (P1.x - x3) - P1.y) % p ) + p) % p;
+                return { x: x3, y: y3 };
+            }
+
+            let Q = G;
+            let out = '1G = (${Q.x}, ${Q.y})\n';
+            for (let i = 2; i <= k; i++) {
+                Q = pointAdd(Q, G);
+                out += '${i}G = (${Q.x}, ${Q.y})\n';
+            }
+            out += '\nTOY PUBLIC KEY (Q = ${k}G): (${Q.x}, ${Q.y})';
+
+            document.getElementById("output").textContent = out;
+        </script>
+    </body>
+</html>
