@@ -2,7 +2,7 @@
 <html lang="it">
     <head>
         <meta charset="UTF-8">
-        <title>Homework 1 - Toy Elliptic Curve</title>
+        <title>Homework 1</title>
         <script>
             window.MathJax = {
                 tex: {
@@ -36,25 +36,25 @@
     </head>
     <body>
 
-        <h1>Homework 1: Public-Key Cryptography</h1>
-        <p>Simulazione dell'algoritmo su curva ellittica giocattolo: <code>y² = x³ + 7 (mod 17)</code></p>
+        <h1>Homework 1: Private Key to Public Key Derivation</h1>
+        <p>Simulation of the algorithm on the Toy Elliptic Curve: <code>y² = x³ + 7 (mod 17)</code></p>
 
         <div class="box">
-            <h3>Calcolo della Toy Public Key Q = kG</h3>
-            <p><strong>Punto Base (G):</strong> (1, 5)<br>
-            <strong>Chiave Privata (k):</strong> 6</p>
+            <h3>Computation of the Toy Public Key Q = kG</h3>
+            <p><strong>Base Point (G):</strong> (1, 5)<br>
+            <strong>Private Key (k):</strong> 6</p>
 
-            <h4>Risultati step-by-step:</h4>
+            <h4>Results:</h4>
             <pre id="output"></pre>
         </div>
 
         <div class="box">
-            <h2>Esplorazione Statistica e Proprietà Crittografiche</h2>
+            <h2>Statistical Exploration and Cryptographic Properties</h2>
             <ul>
-                <li><strong>One-Way Function (ECDLP):</strong> Calcolare $Q = kG$ richiede pochi passaggi di addizione e raddoppio. Ricavare la chiave privata $k$ partendo solo da $Q$ e $G$ è computazionalmente intrattabile su campi di grandi dimensioni (Problema del logaritmo Discreto).</li>
-                <li><strong>Distribuzione e Uniformità:</strong> I punti della curva generato su un campo finito $\mathbb{Z}_p$ appaiono distribuiti in modo pseudocasuale nello spazio discreto delle coordinate.</li>
-                <li><strong>Effetto Valanga (Avalanche Effect):</strong> Modificare anche solo di 1 unità la chiave privata $k$ (es: da 6 a 7) modifica radicalmente le coordinate del punto risultante $Q$.</li>
-                <li><strong>Differenza con le funzioni Hash:</strong> La moltiplicazione scalare mantiene la struttura algebrica di gruppo omomorfo ($aG + bG = (a+b)G$), fondamentale per la verifica delle firme digitali. Le funzioni Hash distruggono del tutto questa struttura.</li>
+                <li><strong>One-Way Function (ECDLP):</strong> Computing $Q = kG$ requires only a few point addition and doubling steps. Recovering the private key $k$ given only $Q$ and $G$ is computationally intractable over large fields (Elliptic Curve Discrete Logarithm Problem).</li>
+                <li><strong>Distribution and Uniformity:</strong> The curve points generated over a finite field $\mathbb{Z}_p$ appear pseudo-randomly distributed across the discrete coordinate space with no apparent linear patterns.</li>
+                <li><strong>Avalanche Effect:</strong> Changing the private key $k$ even by a single unit (e.g., from 6 to 7) drastically changes the resulting point coordinates $Q$.</li>
+                <li><strong>Difference from Hash Functions:</strong> Scalar multiplication preserves the underlying homomorphic group structure ($aG + bG = (a+b)G$), which is essential for digital signature schemes (ECDSA). Hash functions deliberately destroy any algebraic structure.</li>
             </ul>
         </div>
 
