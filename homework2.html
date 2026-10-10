@@ -1,0 +1,178 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Homework 2 - From Wallet Seed to Ethereum Address</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            line-height: 1.6;
+            margin: 40px auto;
+            max-width: 900px;
+            background-color: #f4f6f9;
+            color: #333;
+            padding: 0 20px;
+        }
+
+        header {
+            border-bottom: 2px solid #003366;
+            padding-bottom: 10px;
+            margin-bottom: 30px;
+        }
+
+        header h1 {
+            color: #003366;
+            margin-bottom: 5px;
+        }
+
+        header p {
+            color: #555;
+            margin-top: 0;
+        }
+
+        .btn-back {
+            display: inline-block;
+            background: #003366;
+            color: #fff;
+            padding: 8px 14px;
+            text-decoration: none;
+            border-radius: 4px;
+            margin-bottom: 20px;
+        }
+
+        .btn-back:hover {
+            background: #002244;
+        }
+
+        .section-card {
+            background: #fff;
+            padding: 25px;
+            border-radius: 8px;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+            margin-bottom: 25px;
+        }
+
+        .section-card h2 {
+            color: #003366;
+            margin-top: 0;
+            border-bottom: 1px solid #eee;
+            padding-bottom: 8px;
+        }
+
+        .section-card h3 {
+            color: #444;
+            margin-top: 20px;
+        }
+
+        code {
+            background: #eef2f7;
+            padding: 2px 6px;
+            border-radius: 4px;
+            font-family: monospace;
+            color: #c7254e;
+        }
+
+        .pipeline-flow {
+            background: #1e293b;
+            color: #e2e8f0;
+            padding: 20px;
+            border-radius: 6px;
+            font-family: monospace;
+            line-height: 1.8;
+            white-space: pre-wrap;
+        }
+
+        ul {
+            padding-left: 20px;
+        }
+
+        li {
+            margin-bottom: 10px;
+        }
+    </style>
+</head>
+<body>
+
+    <a href="index.html" class="btn-back">&larr; Back to Index</a>
+
+    <header>
+        <h1>Homework 2: From Wallet Seed to Ethereum Address</h1>
+        <p>Analysis of the practical cryptographic pipeline, standards, and historical evolution in Ethereum wallets</p>
+    </header>
+
+    <!-- 1. PIPELINE OVERVIEW -->
+    <div class="section-card">
+        <h2>1. The Practical Ethereum Wallet Pipeline</h2>
+        <p>An Ethereum wallet does not rely on a single algorithm; rather, it chains multiple specialized cryptographic primitives and standards together. The journey from a human-readable mnemonic phrase to a secure, checksummed address follows this exact sequence:</p>
+        
+        <div class="pipeline-flow">Mnemonic (BIP-39) 
+  ↓ 
+Master Seed 
+  ↓ 
+HD Key Derivation (BIP-32 / BIP-44)
+  ↓ 
+Private Key 
+  ↓ (secp256k1 Elliptic Curve)
+Public Key 
+  ↓ (Keccak-256 Hashing - last 20 bytes)
+Raw Ethereum Address 
+  ↓ (EIP-55 Checksum Encoding)
+Checksummed Address (Mixed-Case)</div>
+    </div>
+
+    <!-- 2. ROLE OF STANDARDS AND PRIMITIVES -->
+    <div class="section-card">
+        <h2>2. Role of Standards and Cryptographic Primitives</h2>
+        <ul>
+            <li><strong>BIP-39 (Mnemonic Sentence & Seed):</strong> Converts a 12-to-24 word human-readable sequence into a cryptographic master seed using key stretching (PBKDF2). This allows users to easily back up their wallet on paper.</li>
+            <li><strong>BIP-32 (Hierarchical Deterministic Wallets):</strong> Introduces an HD structure where a single master seed can deterministically generate an infinite tree of parent and child key pairs.</li>
+            <li><strong>BIP-44 (Multi-Account Path Standard):</strong> Establishes a logical hierarchy for deterministic paths (e.g., <code>m / purpose / coin_type / account / change / address_index</code>), enabling multi-currency and multi-account support.</li>
+            <li><strong>secp256k1 (Elliptic-Curve Cryptography):</strong> The specific Koblitz curve used by Ethereum and Bitcoin ($y^2 = x^3 + 7 \pmod p$) to derive public keys from private keys and handle digital signatures via ECDSA.</li>
+            <li><strong>Keccak-256 (Hashing Function):</strong> Compresses the public key into a fixed-size output. The rightmost 20 bytes of this hash form the base Ethereum address.</li>
+            <li><strong>EIP-55 (Mixed-Case Checksum):</strong> A smart encoding convention that capitalizes specific letters in the address hash to provide built-in error detection against typing mistakes.</li>
+        </ul>
+    </div>
+
+    <!-- 3. CORE CONCEPTUAL DISTINCTIONS -->
+    <div class="section-card">
+        <h2>3. Core Conceptual Distinctions</h2>
+        <p>To analyze wallet security accurately, we must distinguish between several fundamental operations:</p>
+        <ul>
+            <li><strong>Key Generation vs. Key Derivation:</strong> Generation creates initial randomness (e.g., generating a private key or seed), whereas derivation uses a deterministic algorithm (like BIP-32) to compute child keys from a parent seed without additional randomness.</li>
+            <li><strong>Public-Key Cryptography:</strong> Asymmetric mathematics (secp256k1) ensuring that a private key can sign data and generate a public key, while making the reverse computation computationally infeasible.</li>
+            <li><strong>Hashing:</strong> One-way data compression (Keccak-256) mapping inputs of arbitrary size to fixed-size outputs, stripping away algebraic structures.</li>
+            <li><strong>Checksums:</strong> Error-detection mechanisms (EIP-55) embedded into data representations to flag typos.</li>
+            <li><strong>Encoding:</strong> Formatting raw binary data into human-readable representations (such as hex strings or BIP-39 English words).</li>
+        </ul>
+    </div>
+
+    <!-- 4. TEMPORAL AND HISTORICAL CONTEXT -->
+    <div class="section-card">
+        <h2>4. Temporal and Historical Context</h2>
+        <p>These technologies evolved progressively over decades to solve emerging challenges in distributed systems:</p>
+        <ul>
+            <li><strong>1977 — RSA:</strong> Introduction of public-key cryptography, laying the mathematical groundwork for asymmetric encryption.</li>
+            <li><strong>2001 — SHA-2 / SHA-512:</strong> Standardization of secure hash algorithms by NIST.</li>
+            <li><strong>2012 — BIP-32:</strong> Invention of Hierarchical Deterministic wallet structures.</li>
+            <li><strong>2013 — BIP-39:</strong> Introduction of mnemonic sentences for user-friendly wallet backups.</li>
+            <li><strong>2014 — BIP-44:</strong> Multi-account path standards for deterministic wallets.</li>
+            <li><strong>2015 — SHA-3 / Keccak:</strong> NIST standardizes SHA-3 based on the Keccak submission. <em>Note: Ethereum's Keccak-256 differs slightly from the final NIST SHA3-256 standard due to pre-NIST parameter and padding choices.</em></li>
+            <li><strong>2016 — EIP-55:</strong> Introduction of mixed-case checksum addresses to prevent user fund losses on Ethereum.</li>
+        </ul>
+    </div>
+
+    <!-- 5. ARCHITECTURAL MODULARITY -->
+    <div class="section-card">
+        <h2>5. Architectural Modularity: Why Multiple Algorithms?</h2>
+        <p>An Ethereum wallet delegates responsibilities to specialized layers rather than using a single monolithic algorithm:</p>
+        <ul>
+            <li><strong>BIP-39 / BIP-32 / BIP-44</strong> handle human usability and key management.</li>
+            <li><strong>secp256k1</strong> handles ownership verification, authentication, and digital signatures.</li>
+            <li><strong>Keccak-256</strong> handles deterministic data compression and address reduction.</li>
+            <li><strong>EIP-55</strong> handles human-error protection and integrity checks.</li>
+        </ul>
+        <p>Combining these specialized components ensures maximum security, cryptographic separation of concerns, and resilience against single points of failure.</p>
+    </div>
+
+</body>
+</html>
