@@ -4,10 +4,6 @@
         <meta charset="UTF-8">
         <title>Homework 1</title>
 
-        <link rel="preconnect" href="https://fonts.googleapis.com">
-        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-        <link href="https://fonts.googleapis.com/css2?family=Montserrat:ital,wght@0,300..700;1,300..700&family=Playfair+Display:ital,wght@0,600..900;1,600..900&display=swap" rel="stylesheet">
-
         <script>
             window.MathJax = {
                 tex: {
@@ -18,38 +14,62 @@
         <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
         
         <style>
-            body {
-                font-family: 'Montserrat', sans-serif;
-                margin: 40px;
-                background-color: #f4f6f9;
-                color: #75549f;
+            * {
+                box-sizing: border-box;
             }
-            h1, h2, h3 {
-                font-family: 'Playfair Display', serif;
-                color: #003366;
-                letter-spacing: 0.5px;
+            body {
+                font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+                margin: 0;
+                padding: 40px 20px;
+                background-color: #f4f6f9;
+                color: #2c3e50;
+            }
+            .main-contrainer {
+                max-width: 800px;
+                margin: 0 auto;
+            }
+            h1 { 
+                color: #003366; 
+                font-size: 2.1rem;
+                margin-bottom: 6px;
+            }
+            .subtitle {
+                color: #666;
+                font-size: 1.05rem;
+                margin-top: 0;
+                margin-bottom: 25px;
+            }
+            h2 { 
+                color: #003366; 
+                font-size: 1.4rem;
+                margin-top: 0;
+            }
+            h3 { 
+                color: #003366; 
+                font-size: 1.15rem;
             }
             .box {
                 background: white;
-                padding: 25px;
-                border-radius: 12px;
-                box-shadow: 0 4px 12px rgba(0,0,0,0.05);
-                max-width: 750px;
+                padding: 25px 30px;
+                border-radius: 10px;
+                box-shadow: 0 2px 8px rgba(0,0,0,0.06);
                 margin-bottom: 25px;
+                width: 100%;
             }
             pre {
                 background: #1e293b;
                 color: #f8fafc;
-                padding: 18px;
-                border-radius: 8px;
+                padding: 16px;
+                border-radius: 6px;
                 font-family: 'Courier New', Courier, monospace;
                 font-size: 14px;
                 font-weight: 600;
+                overflow-x: auto;
             }
             table {
                 width: 100%;
                 border-collapse: collapse;
-                margin-top: 15px;;
+                margin-top: 15px;
             }
             th, td {
                 border: 1px solid #e2e8f0;
@@ -57,75 +77,80 @@
                 text-align: center;
                 font-size: 14px;
             }
-            th {
-                font-family: 'Playfair Display', serif;
-                background-color: #003366;
-                color: white;
+            th { 
+                background-color: #003366; 
+                color: white; 
+                font-weight: 600;
             }
+            tr:nth-child(even) { background-color: #f8fafc; }
+            ul { line-height: 1.6; }
+            .highlight { background-color: #e6f3ff; font-weight: bold; }
         </style>
     </head>
     <body>
 
-        <h1>Homework 1: Ethereum Public Key Derivation Simulation</h1>
-        <p>Toy Elliptic Curve: <code>y² = x³ + 7 (mod 17)</code></p>
+        <div class="main-container">
+            <h1>Homework 1: Ethereum Public Key Derivation Simulation</h1>
+            <p class="subtitle">Simulation and statistical analysis on a toy elliptic curve: <code>y² = x³ + 7 (mod 17)</code></p>
 
-        <div class="box">
-            <h3>1. Base Computation of the Toy Public Key Q = kG</h3>
-            <p><strong>Base Point (G):</strong> (1, 5)<br>
-            <strong>Private Key (k):</strong> 6</p>
+            <!-- PART 1: BASE ASSIGNMENT -->
+            <div class="box">
+                <h2>1. Base Computation of the Toy Public Key Q = kG</h2>
+                <p><strong>Base Point (G):</strong> (1, 5)<br>
+                <strong>Private Key (k):</strong> 6</p>
 
-            <h4>Step-by-step Results:</h4>
-            <pre id="output"></pre>
+                <h4>Step-by-step Results:</h4>
+                <pre id="output-base"></pre>
+            </div>
+
+            <!-- PART 2: STATISTICAL EXPLORATION -->
+            <div class="box">
+                <h2>2. Statistical Exploration</h2>
+                <p>Testing scalar multiplication $Q = kG$ for all valid scalar multipliers $k \in [1, 18]$ on $G=(1,5)$.</p>
+
+                <h3>Coordinate Distribution Table</h3>
+                <table id="table-points">
+                    <thead>
+                        <tr>
+                            <th>k</th>
+                            <th>Point kG (x, y)</th>
+                            <th>x (5-bit binary)</th>
+                            <th>y (5-bit binary)</th>
+                        </tr>
+                    </thead>
+                    <tbody></tbody>
+                </table>
+
+                <h3 style="margin-top:30px;">Avalanche Effect Demonstration</h3>
+                <p>Observing output changes when flipping/incrementing 1 bit in the private key $k$:</p>
+                <table id="table-avalanche">
+                    <thead>
+                        <tr>
+                            <th>Private Key (k)</th>
+                            <th>Public Key Q (x, y)</th>
+                            <th>Binary (x || y)</th>
+                            <th>Bit Differences vs k=6</th>
+                        </tr>
+                    </thead>
+                    <tbody></tbody>
+                </table>
+            </div>
+
+            <!-- PART 3: THEORETICAL DISCUSSION -->
+            <div class="box">
+                <h2>3. Cryptographic Properties & Discussion</h2>
+                <ul>
+                    <li><strong>Uniformity and Pseudorandomness:</strong> As seen in the generated points, small sequential changes in $k$ yield point coordinates that appear randomly scattered over $\mathbb{Z}_{17}$. There are no linear trends, rendering output values unpredictable without computing the full scalar multiplication.</li>
+                    <li><strong>Avalanche Effect:</strong> Changing $k$ from 6 to 7 (a single step) completely changes the binary representation of both $x$ and $y$. A high bit-distance between adjacent outputs is a core requirement for one-way functions to prevent gradient-based attacks.</li>
+                    <li><strong>Meaningful Properties for One-Way Functions vs Hash Functions:</strong>
+                        <ul>
+                            <li><em>One-Way Functions (Elliptic Curves):</em> Require <strong>computational infeasibility of inversion</strong> (ECDLP) and <strong>homomorphic algebraic structure</strong> ($aG + bG = (a+b)G$), allowing signature verification. Perfect uniform distribution over all integers is NOT strictly required, as long as the underlying group is sufficiently large.</li>
+                            <li><em>Cryptographic Hash Functions:</em> Strictly require <strong>uniform bit distribution</strong>, <strong>fixed output length</strong>, <strong>avalanche effect (50% bit flip probability)</strong>, <strong>pre-image resistance</strong>, and <strong>collision resistance</strong>. Unlike elliptic curves, hash functions deliberately destroy algebraic structure to prevent mathematical reduction.</li>
+                        </ul>
+                    </li>
+                </ul>
+            </div>
         </div>
-
-        <div class="box">
-            <h2>2. Statistical Exploration</h2>
-            <p>Testing scalar multiplication $Q = kG$ for all valid scalar multipliers $k \in [1, 18]$ on $G=(1,5)$.</p>
-            
-            <h3>Coordinate Distriution Table</h3>
-            <table id="table-points">
-                <thead>
-                    <tr>
-                        <th>k</th>
-                        <th>Point kG (x, y)</th>
-                        <th>x (5-bit binary)</th>
-                        <th>y (5-bit binary)</th>
-                    </tr>
-                </thead>
-                <tbody></tbody>
-            </table>
-            
-            <h3 style="margin-top:25px;">Avalanche Effect Demonstration</h3>
-            <p>Observing output changes when flipping/incrementing 1 bit in the private key $k$:</p>
-            <table id="table-avalanche">
-                <thead>
-                    <tr>
-                        <th>Private Key (k)</th>
-                        <th>Public Key Q (x, y)</th>
-                        <th>Binary (x || y)</th>
-                        <th>Bit Differences vs k=6</th>
-                    </tr>
-                </thead>
-                <tbody></tbody>
-            </table>
-        </div>
-
-
-        <div class="box">
-            <h2>3. Cryptographic Properties & Discussion</h2>
-            <ul>
-                <li><strong>Uniformity and Pseudorandomness:</strong> As seen in the generated points, small sequential changes in $k$ yield point coordinates that appear randomly scattered over $\mathbb{Z}_{17}$. There are no linear trends, rendering output values unpredictable without computing the full scalar multiplication.</li>
-                <li><strong>Avalanche Effect:</strong> Changing $k$ from 6 to 7 (a single step) completely changes the binary representation of both $x$ and $y$. A high bit-distance between adjacent outputs is a core requirement for one-way functions to prevent gradient-based attacks.</li>
-                <li><strong>Meaningful Properties for One-Way Functions vs Hash Functions:</strong>
-                    <ul>
-                        <li><em>One-Way Functions (Elliptic Curves):</em> Require <strong>computational infeasibility of inversion</strong> (ECDLP) and <strong>homomorphic algebraic structure</strong> ($aG + bG = (a+b)G$), allowing signature verification. Perfect uniform distribution over all integers is NOT strictly required, as long as the underlying group is sufficiently large.</li>
-                        <li><em>Cryptographic Hash Functions:</em> Strictly require <strong>uniform bit distribution</strong>, <strong>fixed output length</strong>, <strong>avalanche effect (50% bit flip probability)</strong>, <strong>pre-image resistance</strong>, and <strong>collision resistance</strong>. Unlike elliptic curves, hash functions deliberately destroy algebraic structure to prevent mathematical reduction.</li>
-                    </ul>
-                </li>
-            </ul>
-        </div>
-
-
 
         <script>
             const p = 17, a = 0;
@@ -141,10 +166,10 @@
                 if (!P2) return P1;
 
                 let num, den;
-                if (P1.x === P2.x && P1.y === P2.y){
+                if (P1.x === P2.x && P1.y === P2.y) {
                     num = 3 * P1.x * P1.x + a;
                     den = 2 * P1.y;
-                } else if (P1.x === P2.x){
+                } else if (P1.x === P2.x) {
                     return null;
                 } else {
                     num = P2.y - P1.y;
@@ -159,6 +184,7 @@
 
             const toBin = (num) => num !== null ? num.toString(2).padStart(5, '0') : 'N/A';
 
+            // 1. Base Task (k = 6)
             let Q = G;
             let outBase = `1G = (${Q.x}, ${Q.y})\n`;
             for (let i = 2; i <= 6; i++) {
@@ -168,6 +194,7 @@
             outBase += `\nTOY PUBLIC KEY (Q = 6G): (${Q.x}, ${Q.y})`;
             document.getElementById("output-base").textContent = outBase;
 
+            // 2. Statistical Exploration (k = 1 to 18)
             const tableBody = document.querySelector("#table-points tbody");
             let curr = G;
             let pointsList = [];
@@ -186,6 +213,7 @@
                 curr = pointAdd(curr, G);
             }
 
+            // 3. Avalanche Effect Table
             const avalancheBody = document.querySelector("#table-avalanche tbody");
             const targetK6 = pointsList.find(p => p.k === 6);
 
@@ -209,7 +237,6 @@
                 `;
                 avalancheBody.appendChild(row);
             });
-            
         </script>
     </body>
 </html>
