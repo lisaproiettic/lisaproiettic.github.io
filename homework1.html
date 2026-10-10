@@ -156,7 +156,7 @@
         <div class="homework-card">
             <h2>3. Cryptographic Properties & Discussion</h2>
             <ul>
-                <li><strong>Uniformity and Pseudorandomness:</strong> Although local changes in $k$ yield coordinate shifts that do not follow a simple linear equation ($y = mx + q$), the outputs are strictly bounded within $\mathbb{Z}_{17}$ and exhibit a repeating cyclic order. This proves that the toy model do not provide true pseudorandomness, but rather a deterministic repeating sequence.</li>
+                <li><strong>Uniformity and Pseudorandomness:</strong> Although local changes in $k$ yield coordinate shifts that do not follow a simple linear equation ($y = mx + q$), the outputs are strictly bounded within $\mathbb{Z}_{17}$ and exhibit a repeating cyclic order. This proves that the toy model does not provide true pseudorandomness, but rather a deterministic repeating sequence.</li>
                 <li><strong>Toy vs Real Elliptic Curve:</strong> As the Coordinate Distribution Table shows, the scalar multiplication sequence wraps around into a small cyclic group after a few iterations, causing points to repeat. This would lead to a situation where more private keys generate the same public key. In real-world elliptic curves though, like Ethereum's secp256k1, the scale of the group order is exponentially higher, making collisions or accidental key overlaps statistically impossible.</li>
                 <li><strong>Avalanche Effect:</strong> Changing $k$ from 6 to 7 (a single step) completely changes the binary representation of both $x$ and $y$. A high bit-distance between adjacent outputs is a core requirement for one-way functions to prevent gradient-based attacks.</li>
             </ul>
