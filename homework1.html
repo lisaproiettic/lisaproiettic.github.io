@@ -115,7 +115,7 @@
             <p><strong>Base Point (G):</strong> (1, 5)<br>
             <strong>Private Key (k):</strong> 6</p>
 
-            <h4>Step-by-step Results:</h4>
+            <h4>Step-by-step results:</h4>
             <pre id="output-base"></pre>
         </div>
 
@@ -156,14 +156,9 @@
         <div class="homework-card">
             <h2>3. Cryptographic Properties & Discussion</h2>
             <ul>
-                <li><strong>Uniformity and Pseudorandomness:</strong> As seen in the generated points, small sequential changes in $k$ yield point coordinates that appear randomly scattered over $\mathbb{Z}_{17}$. There are no linear trends, rendering output values unpredictable without computing the full scalar multiplication.</li>
+                <li><strong>Uniformity and Pseudorandomness:</strong> Although local changes in $k$ yield coordinate shifts that do not follow a simple linear equation ($y = mx + q$), the outputs are strictly bounded within $\mathbb{Z}_{17}$ and exhibit a repeating cyclic order. This proves that the toy model do not provide true pseudorandomness, but rather a deterministic repeating sequence.</li>
+                <li><strong>Toy vs Real Elliptic Curve:</strong> As the Coordinate Distribution Table shows, the scalar multiplication sequence wraps around into a small cyclic group after a few iterations, causing points to repeat. This would lead to a situation where more private keys generate the same public key. In real-world elliptic curves though, like Ethereum's secp256k1, the scale of the group order is exponentially higher, making collisions or accidental key overlaps statistically impossible.</li>
                 <li><strong>Avalanche Effect:</strong> Changing $k$ from 6 to 7 (a single step) completely changes the binary representation of both $x$ and $y$. A high bit-distance between adjacent outputs is a core requirement for one-way functions to prevent gradient-based attacks.</li>
-                <li><strong>Meaningful Properties for One-Way Functions vs Hash Functions:</strong>
-                    <ul>
-                        <li><em>One-Way Functions (Elliptic Curves):</em> Require <strong>computational infeasibility of inversion</strong> (ECDLP) and <strong>homomorphic algebraic structure</strong> ($aG + bG = (a+b)G$), allowing signature verification. Perfect uniform distribution over all integers is NOT strictly required, as long as the underlying group is sufficiently large.</li>
-                        <li><em>Cryptographic Hash Functions:</em> Strictly require <strong>uniform bit distribution</strong>, <strong>fixed output length</strong>, <strong>avalanche effect (50% bit flip probability)</strong>, <strong>pre-image resistance</strong>, and <strong>collision resistance</strong>. Unlike elliptic curves, hash functions deliberately destroy algebraic structure to prevent mathematical reduction.</li>
-                    </ul>
-                </li>
             </ul>
         </div>
 
