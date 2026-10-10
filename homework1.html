@@ -67,15 +67,16 @@
                 overflow-x: auto;
             }
             table {
-                width: 100%;
+                width: auto;
+                min-width: 450px;
+                margin: 15px;
                 border-collapse: collapse;
-                margin-top: 15px;
             }
             th, td {
                 border: 1px solid #e2e8f0;
-                padding: 10px;
+                padding: 8px 14px;
                 text-align: center;
-                font-size: 14px;
+                font-size: 13.5px;
             }
             th { 
                 background-color: #003366; 
@@ -91,7 +92,7 @@
 
         <div class="main-container">
             <h1>Homework 1: Ethereum Public Key Derivation Simulation</h1>
-            <p class="subtitle">Simulation and statistical analysis on a toy elliptic curve: <code>y² = x³ + 7 (mod 17)</code></p>
+            <p class="subtitle">Simulation and Statistical Analysis on a toy elliptic curve: <code>y² = x³ + 7 (mod 17)</code></p>
 
             <!-- PART 1: BASE ASSIGNMENT -->
             <div class="box">
@@ -99,7 +100,7 @@
                 <p><strong>Base Point (G):</strong> (1, 5)<br>
                 <strong>Private Key (k):</strong> 6</p>
 
-                <h4>Step-by-step Results:</h4>
+                <h4>Step-by-step results:</h4>
                 <pre id="output-base"></pre>
             </div>
 
