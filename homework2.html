@@ -103,20 +103,31 @@
     <!-- 1. PIPELINE OVERVIEW -->
     <div class="section-card">
         <h2>1. The Practical Ethereum Wallet Pipeline</h2>
-        <p>An Ethereum wallet does not rely on a single algorithm; it relies on a sequence of standards and mathematical functions that, when combined, form the cryptographic pipline that will transform a user-friendly seed phrase into an Ethereum addess. The exact procedure is the following:</p>
+        <p>An Ethereum wallet does not rely on a single algorithm; it relies on a sequence of standards and cryptographic primitives that, when combined, form the cryptographic pipeline that will transform a user-friendly seed phrase into an Ethereum addess. The exact procedure is the following:</p>
         
         <div class="pipeline-flow">Mnemonic (BIP-39) 
   ↓ 
+
 Master Seed 
+
   ↓ 
+
 HD Key Derivation (BIP-32 / BIP-44)
+
   ↓ 
+
 Private Key 
+
   ↓ (secp256k1 Elliptic Curve)
+
 Public Key 
+
   ↓ (Keccak-256 Hashing - last 20 bytes)
+
 Raw Ethereum Address 
+
   ↓ (EIP-55 Checksum Encoding)
+  
 Checksummed Address (Mixed-Case)</div>
     </div>
 
