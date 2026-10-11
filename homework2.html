@@ -1,96 +1,106 @@
 <!DOCTYPE html>
 <html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <title>Homework 2 - From Wallet Seed to Ethereum Address</title>
-    <style>
-        body {
-            font-family: Arial, sans-serif;
-            line-height: 1.6;
-            margin: 40px auto;
-            max-width: 900px;
-            background-color: #f4f6f9;
-            color: #333;
-            padding: 0 20px;
-        }
+    <head>
+        <meta charset="UTF-8">
+        <title>Homework 2 - From Wallet Seed to Ethereum Address</title>
+        
+        <script>
+            window.MathJax = {
+                tex: {
+                    inlineMath: [['$', '$'], ['\\(', '\\)']]
+                }
+            };
+        </script>
+        <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+            
+        <style>
+            body {
+                font-family: Arial, sans-serif;
+                line-height: 1.6;
+                margin: 40px auto;
+                max-width: 900px;
+                background-color: #f4f6f9;
+                color: #333;
+                padding: 0 20px;
+            }
 
-        header {
-            border-bottom: 2px solid #003366;
-            padding-bottom: 10px;
-            margin-bottom: 30px;
-        }
+            header {
+                border-bottom: 2px solid #003366;
+                padding-bottom: 10px;
+                margin-bottom: 30px;
+            }
 
-        header h1 {
-            color: #003366;
-            margin-bottom: 5px;
-        }
+            header h1 {
+                color: #003366;
+                margin-bottom: 5px;
+            }
 
-        header p {
-            color: #555;
-            margin-top: 0;
-        }
+            header p {
+                color: #555;
+                margin-top: 0;
+            }
 
-        .btn-back {
-            display: inline-block;
-            background: #003366;
-            color: #fff;
-            padding: 8px 14px;
-            text-decoration: none;
-            border-radius: 4px;
-            margin-bottom: 20px;
-        }
+            .btn-back {
+                display: inline-block;
+                background: #003366;
+                color: #fff;
+                padding: 8px 14px;
+                text-decoration: none;
+                border-radius: 4px;
+                margin-bottom: 20px;
+            }
 
-        .btn-back:hover {
-            background: #002244;
-        }
+            .btn-back:hover {
+                background: #002244;
+            }
 
-        .section-card {
-            background: #fff;
-            padding: 25px;
-            border-radius: 8px;
-            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
-            margin-bottom: 25px;
-        }
+            .section-card {
+                background: #fff;
+                padding: 25px;
+                border-radius: 8px;
+                box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+                margin-bottom: 25px;
+            }
 
-        .section-card h2 {
-            color: #003366;
-            margin-top: 0;
-            border-bottom: 1px solid #eee;
-            padding-bottom: 8px;
-        }
+            .section-card h2 {
+                color: #003366;
+                margin-top: 0;
+                border-bottom: 1px solid #eee;
+                padding-bottom: 8px;
+            }
 
-        .section-card h3 {
-            color: #444;
-            margin-top: 20px;
-        }
+            .section-card h3 {
+                color: #444;
+                margin-top: 20px;
+            }
 
-        code {
-            background: #eef2f7;
-            padding: 2px 6px;
-            border-radius: 4px;
-            font-family: monospace;
-            color: #c7254e;
-        }
+            code {
+                background: #eef2f7;
+                padding: 2px 6px;
+                border-radius: 4px;
+                font-family: monospace;
+                color: #c7254e;
+            }
 
-        .pipeline-flow {
-            background: #1e293b;
-            color: #e2e8f0;
-            padding: 20px;
-            border-radius: 6px;
-            font-family: monospace;
-            line-height: 1.8;
-            white-space: pre-wrap;
-        }
+            .pipeline-flow {
+                background: #1e293b;
+                color: #e2e8f0;
+                padding: 20px;
+                border-radius: 6px;
+                font-family: monospace;
+                line-height: 1.8;
+                white-space: pre-wrap;
+            }
 
-        ul {
-            padding-left: 20px;
-        }
+            ul {
+                padding-left: 20px;
+            }
 
-        li {
-            margin-bottom: 10px;
-        }
-    </style>
-</head>
+            li {
+                margin-bottom: 10px;
+            }
+        </style>
+    </head>
 <body>
 
     <a href="index.html" class="btn-back">&larr; Back to Index</a>
@@ -106,7 +116,8 @@
         <p>An Ethereum wallet does not rely on a single algorithm; it relies on a sequence of standards and cryptographic primitives that, when combined, form the cryptographic pipeline that will transform a user-friendly seed phrase into an Ethereum addess. The exact procedure is the following:</p>
         
         <div class="pipeline-flow">Mnemonic (BIP-39) 
-  ↓ 
+
+  ↓ PBKDF2 with HMAC-SHA512
 
 Master Seed 
 
@@ -127,18 +138,18 @@ Public Key
 Raw Ethereum Address 
 
   ↓ (EIP-55 Checksum Encoding)
-  
+
 Checksummed Address (Mixed-Case)</div>
     </div>
 
     <!-- 2. ROLE OF STANDARDS AND PRIMITIVES -->
     <div class="section-card">
-        <h2>2. Role of Standards and Cryptographic Primitives</h2>
+        <h2>2. A deep dive into the Ethereum wallet's Standards and Cryptographic Primitives</h2>
         <ul>
-            <li><strong>BIP-39 (Mnemonic Sentence & Seed):</strong> Converts a 12-to-24 word human-readable sequence into a cryptographic master seed using key stretching (PBKDF2). This allows users to easily back up their wallet on paper.</li>
-            <li><strong>BIP-32 (Hierarchical Deterministic Wallets):</strong> Introduces an HD structure where a single master seed can deterministically generate an infinite tree of parent and child key pairs.</li>
-            <li><strong>BIP-44 (Multi-Account Path Standard):</strong> Establishes a logical hierarchy for deterministic paths (e.g., <code>m / purpose / coin_type / account / change / address_index</code>), enabling multi-currency and multi-account support.</li>
-            <li><strong>secp256k1 (Elliptic-Curve Cryptography):</strong> The specific Koblitz curve used by Ethereum and Bitcoin ($y^2 = x^3 + 7 \pmod p$) to derive public keys from private keys and handle digital signatures via ECDSA.</li>
+            <li><strong>BIP-39 (Mnemonic Sentence & Seed):</strong> It trasforms entropy (128 to 256 bits of high-quality randomness) into a human-friendly sentence of 12 to 24 words chosen from a standardized list. It then applies PBKDF2 (a Key Derivation Function) using HMAC-SHA512 to stretch the mnemonic into a deterministic 512-bit binary seed.</li>
+            <li><strong>BIP-32 (Hierarchical Deterministic Key Derivation):</strong> It introduces an HD structure where a single master seed can deterministically generate an infinite tree of parent and child key pairs. This eliminates the need to continuously backup new individual private keys.</li>
+            <li><strong>BIP-44 (Multi-Account Path Standard):</strong> It etablishes a logical hierarchy for deterministic paths (e.g., <code>m / purpose / coin_type / account / change / address_index</code>), enabling multi-currency and multi-account support.</li>
+            <li><strong>secp256k1 (Elliptic-Curve Cryptography):</strong> It's the specific Koblitz curve used by Ethereum and Bitcoin ($y^2 = x^3 + 7 \pmod p$) to derive public keys from private keys and handle digital signatures via ECDSA.</li>
             <li><strong>Keccak-256 (Hashing Function):</strong> Compresses the public key into a fixed-size output. The rightmost 20 bytes of this hash form the base Ethereum address.</li>
             <li><strong>EIP-55 (Mixed-Case Checksum):</strong> A smart encoding convention that capitalizes specific letters in the address hash to provide built-in error detection against typing mistakes.</li>
         </ul>
