@@ -176,18 +176,25 @@ Checksummed Address (Mixed-Case)</div>
         
         <div class="definition-box">
             <strong>Key Generation</strong><br>
-            <strong>Key generation</strong> is the process of creating a new, independent cryptographic key from scratch using a Cryptographically Secure Pseudo-Random Number Generator. If you run key generation twice, the keys you will obtain will be completely unrelated. Because of this reason, if you generate multiple random keys you also must back up every one of them.
+            The process of creating a new, independent cryptographic key from scratch using a Cryptographically Secure Pseudo-Random Number Generator (CSPRNG). If you run key generation twice, the keys you will obtain will be completely unrelated. Because of this reason, if you generate multiple random keys you also must back up every one of them.
         </div>
 
         <div class="definition-box">
             <strong>Key Derivation</strong><br>
-            <strong>Key Derivation is the process of mathematically calculating new keys from an existing master secret (a seed or parent key) using a deterministic one-way function. It works by passing the parent secret and a specific index or path through cryptographic algoritgms or elliptic curve math. Since the keys are derived rather than randomly generated, there's no need to back up every one of them.</strong>
+            The process of mathematically calculating new keys from an existing master secret (a seed or parent key) using a deterministic one-way function. It works by passing the parent secret and a specific index or path through cryptographic algoritgms or elliptic curve math. Since the keys are derived rather than randomly generated, there's no need to back up every one of them.
         </div>
 
         <div class="definition-box">
             <strong>Public-Key Cryptography</strong><br>
             A cryptographic system that uses a pair of mathematically linked keys for encryption, decryption and digital signatures. The main feature of this cryptographic system is the fact that the key is shared openly with anyone. It is used to encrypt messages intended for the owner (who will later decrypt it with the private key) or to verify digital signatures created by the owner's private key.
-       </div> 
+        </div> 
+
+        <div class="definition-box">
+            <strong>Hashing</strong><br>
+            A mathematical operation performed by a cryptographic hash function that takes an input of any arbitrary size and converts it into a fixed-size string of bits (called hash, digest or output). In blockchain systems like Ethereum, cryptographic hash functions have the properties of being <strong>deterministic</strong> (the exact same input will always produce the exact same digest), <strong>one-way</strong> (it is computationally easy to compute the hash from the input but practically impossible to reverse the process to find the original input), <strong>Collision Resistant</strong> (it is extremely difficult to find two completely different inputs that produce the exact same digest) and <strong>Avalanche Effect</strong> (changing even a single bit in the input radically alters the output).
+        </div>
+
+
     </div>
 
     <!-- 4. TEMPORAL AND HISTORICAL CONTEXT -->
