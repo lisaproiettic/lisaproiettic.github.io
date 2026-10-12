@@ -158,14 +158,22 @@ Checksummed Address (Mixed-Case)</div>
     <!-- 3. CORE CONCEPTUAL DISTINCTIONS -->
     <div class="section-card">
         <h2>3. Core Conceptual Distinctions</h2>
-        <p>To analyze wallet security accurately, we must distinguish between several fundamental operations:</p>
-        <ul>
-            <li><strong>Key Generation vs. Key Derivation:</strong> Generation creates initial randomness (e.g., generating a private key or seed), whereas derivation uses a deterministic algorithm (like BIP-32) to compute child keys from a parent seed without additional randomness.</li>
-            <li><strong>Public-Key Cryptography:</strong> Asymmetric mathematics (secp256k1) ensuring that a private key can sign data and generate a public key, while making the reverse computation computationally infeasible.</li>
-            <li><strong>Hashing:</strong> One-way data compression (Keccak-256) mapping inputs of arbitrary size to fixed-size outputs, stripping away algebraic structures.</li>
-            <li><strong>Checksums:</strong> Error-detection mechanisms (EIP-55) embedded into data representations to flag typos.</li>
-            <li><strong>Encoding:</strong> Formatting raw binary data into human-readable representations (such as hex strings or BIP-39 English words).</li>
-        </ul>
+        <p>To analyze wallet security accurately, there are some concepts that need special attention:</p>
+        
+        <div class="definition-box">
+            <strong>Key Generation</strong><br>
+            <strong>Key generation</strong> is the process of creating a new, independent cryptographic key from scratch using a Cryptographically Secure Pseudo-Random Number Generator. If you run key generation twice, the keys you will obtain will be completely unrelated. Because of this reason, if you generate multiple random keys you also must back up every one of them.
+        </div>
+
+        <div class="definition-box">
+            <strong>Key Derivation</strong><br>
+            <strong>Key Derivation is the process of mathematically calculating new keys from an existing master secret (a seed or parent key) using a deterministic one-way function. It works by passing the parent secret and a specific index or path through cryptographic algoritgms or elliptic curve math. Since the keys are derived rather than randomly generated, there's no need to back up every one of them.</strong>
+        </div>
+
+        <div class="definition-box">
+        <strong>Public-Key Cryptography</strong><br>
+        <strong>Public-Key Cryptography is a cryptographic system that uses a pair of mathematically linked keys for encryption, decryption and digital signatures. The main feature of this cryptographic system is the fact that the key is shared openly with anyone. It is used to encrypt messages intended for the owner (who will later decrypt it with the private key) or to verify digital signatures created by the owner's private key.</strong>
+       </div> 
     </div>
 
     <!-- 4. TEMPORAL AND HISTORICAL CONTEXT -->
