@@ -83,7 +83,7 @@
             }
 
             .pipeline-flow {
-                background: #1e293b;
+                background: #003366;
                 color: #e2e8f0;
                 padding: 20px;
                 border-radius: 6px;
@@ -150,8 +150,8 @@ Checksummed Address (Mixed-Case)</div>
             <li><strong>BIP-32 (Hierarchical Deterministic Key Derivation):</strong> It introduces an HD structure where a single master seed can deterministically generate an infinite tree of parent and child key pairs. This eliminates the need to continuously backup new individual private keys.</li>
             <li><strong>BIP-44 (Multi-Account Path Standard):</strong> It etablishes a logical hierarchy for deterministic paths (e.g., <code>m / purpose / coin_type / account / change / address_index</code>), enabling multi-currency and multi-account support.</li>
             <li><strong>secp256k1 (Elliptic-Curve Cryptography):</strong> It's the specific Koblitz curve used by Ethereum and Bitcoin ($y^2 = x^3 + 7 \pmod p$) to derive public keys from private keys and handle digital signatures via ECDSA.</li>
-            <li><strong>Keccak-256 (Hashing Function):</strong> Compresses the public key into a fixed-size output. The rightmost 20 bytes of this hash form the base Ethereum address.</li>
-            <li><strong>EIP-55 (Mixed-Case Checksum):</strong> A smart encoding convention that capitalizes specific letters in the address hash to provide built-in error detection against typing mistakes.</li>
+            <li><strong>Keccak-256 (Hashing Function):</strong> It compresses the public key into a fixed-size output. The rightmost 20 bytes of this hash form the base Ethereum address.</li>
+            <li><strong>EIP-55 (Mixed-Case Checksum):</strong> It's a smart encoding convention that capitalizes specific letters in the address hash to provide built-in error detection against typing mistakes.</li>
         </ul>
     </div>
 
