@@ -1,0 +1,255 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8">
+        <title>Homework 3 - Classical vs Modern Cryptanalysis</title>
+        
+        <script>
+            window.MathJax = {
+                tex: {
+                    inlineMath: [['$', '$'], ['\\(', '\\)']]
+                }
+            };
+        </script>
+        <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+            
+        <style>
+            body {
+                font-family: Arial, sans-serif;
+                line-height: 1.6;
+                margin: 40px auto;
+                max-width: 900px;
+                background-color: #eddefa;
+                color: #333;
+                padding: 0 20px;
+            }
+
+            header {
+                border-bottom: 2px solid #5b21b6;
+                padding-bottom: 10px;
+                margin-bottom: 30px;
+            }
+
+            header h1 {
+                color: #5b21b6;
+                margin-bottom: 5px;
+            }
+
+            header p {
+                color: #555;
+                margin-top: 0;
+            }
+
+            .btn-back {
+                display: inline-block;
+                background: #5b21b6;
+                color: #fff;
+                padding: 8px 14px;
+                text-decoration: none;
+                border-radius: 4px;
+                margin-bottom: 20px;
+            }
+
+            .btn-back:hover {
+                background: #6d28d9;
+            }
+
+            .section-card {
+                background: #fff;
+                padding: 25px;
+                border-radius: 8px;
+                box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+                margin-bottom: 25px;
+            }
+
+            .section-card h2 {
+                color: #5b21b6;
+                margin-top: 0;
+                border-bottom: 1px solid #eee;
+                padding-bottom: 8px;
+            }
+
+            .section-card h3 {
+                color: #444;
+                margin-top: 20px;
+            }
+
+            .definition-box {
+                background: #eef2f7;
+                border-left: 4px solid #5b21b6;
+                color: #333;
+                padding: 15px 20px;
+                margin-bottom: 15px;
+                border-radius: 4px;
+                line-height: 1.6;
+            }
+
+            .definition-box strong {
+                color: #1e293b;
+            }
+
+            code {
+                background: #eef2f7;
+                padding: 2px 6px;
+                border-radius: 4px;
+                font-family: monospace;
+                color: #5b21b6;
+            }
+
+            pre {
+                background: #1e293b;
+                color: #f8fafc;
+                padding: 15px;
+                border-radius: 6px;
+                font-family: 'Courier New', Courier, monospace;
+                font-size: 14px;
+                overflow-x: auto;
+            }
+
+            table {
+                width: 100%;
+                margin: 15px 0;
+                border-collapse: collapse;
+            }
+
+            th, td {
+                border: 1px solid #e2e8f0;
+                padding: 8px 12px;
+                text-align: center;
+                font-size: 13.5px;
+            }
+
+            th { 
+                background-color: #5b21b6; 
+                color: white; 
+            }
+
+            tr:nth-child(even) { background-color: #f8fafc; }
+            ul { padding-left: 20px; }
+            li { margin-bottom: 10px; }
+        </style>
+    </head>
+<body>
+
+    <a href="index.html" class="btn-back">&larr; Back to Index</a>
+
+    <header>
+        <h1>Homework 3: Cryptanalysis & Comparative Security</h1>
+        <p>Comparative analysis of classical ciphers vs. toy elliptic curve cryptography, statistical cryptanalysis, and key-space vulnerability assessments.</p>
+    </header>
+
+    <!-- 1. ENCRYPTION & DECRYPTION COMPARISON -->
+    <div class="section-card">
+        <h2>1. Encryption & Decryption: Toy ECC vs. Caesar Cipher</h2>
+        <p>To establish a direct baseline between classical and modern primitives, we process a simple alphanumeric message using both a <strong>Caesar Cipher</strong> (classical substitution) and a <strong>Toy Elliptic Curve Scheme</strong> based on $y^2 = x^3 + 7 \pmod{17}$ (modern public-key structural mapping).</p>
+        
+        <div class="definition-box">
+            <strong>Target Message:</strong> <code>HELLO</code> (Mapped to numerical indexes or character streams)
+        </div>
+
+        <h3>Procedure & Algorithmic Roles</h3>
+        <ul>
+            <li><strong>Caesar Cipher (Shift $k = 3$):</strong> Each plaintext letter is shifted forward alphabetically by 3 positions (e.g., <code>H $\to$ K</code>). Decryption reverses the operation by shifting backward by $k$. The key space is extremely restricted ($K \in [0, 25]$).</li>
+            <li><strong>Toy ECC Scheme ($Q = kG$):</strong> Messages or keys are mapped to curve points. Using base point $G=(1,5)$ and private key $k=6$, the public point is derived as $Q = 6G = (5,8)$. Encryption/decryption relies on scalar point multiplication over a finite field $\mathbb{Z}_{17}$.</li>
+        </ul>
+
+        <h3>Comparative Analysis</h3>
+        <table>
+            <thead>
+                <tr>
+                    <th>Feature</th>
+                    <th>Caesar Cipher</th>
+                    <th>Toy secp256k1 ECC Scheme</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td><strong>Mathematical Basis</strong></td>
+                    <td>Modular arithmetic shift ($\pmod{26}$)</td>
+                    <td>Group law on elliptic curves over finite fields ($\pmod{17}$)</td>
+                </tr>
+                <tr>
+                    <td><strong>Key Space</strong></td>
+                    <td>26 possible keys (trivial search space)</td>
+                    <td>Restricted range in toy model ($[1, 18]$); $2^{256}$ in production</td>
+                </tr>
+                <tr>
+                    <td><strong>Statistical Property</strong></td>
+                    <td>Preserves plaintext letter frequencies (monogram structure intact)</td>
+                    <td>Produces structural point outputs; destroys linguistic correlations</td>
+                </tr>
+                <tr>
+                    <td><strong>Directionality</strong></td>
+                    <td>Symmetric (same key for encrypt/decrypt)</td>
+                    <td>Asymmetric structure (Private key $k$, Public point $Q$)</td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+
+    <!-- 2. STATISTICAL CRYPTANALYSIS OF THE CAESAR CIPHER -->
+    <div class="section-card">
+        <h2>2. Statistical Cryptanalysis of the Caesar Cipher</h2>
+        <p>Because the Caesar cipher performs a simple monoalphabetic substitution, it preserves the intrinsic statistical properties of the underlying language. By analyzing character frequencies (monograms, e.g., 'E' or 'A' in English/Italian), an attacker can reliably recover the hidden key.</p>
+
+        <h3>Frequency Analysis Algorithm</h3>
+        <p>The cryptanalysis process follows these core steps:</p>
+        <ol>
+            <li>Compute the frequency distribution of letters in the given ciphertext.</li>
+            <li>Compare the resulting histogram against the known language standard distribution vector.</li>
+            <li>Identify the peak shift (distance) between the most frequent ciphertext letter and the language's expected most common letter (e.g., 'E').</li>
+            <li>Exhaustively test candidate shifts or score alternatives using chi-squared statistics or n-gram scoring.</li>
+        </ol>
+
+        <h3>Impact of Text Length & Limitations</h3>
+        <div class="definition-box">
+            <strong>Effectiveness vs. Text Size:</strong> 
+            <ul>
+                <li><strong>Short Ciphertexts:</strong> Statistical anomalies heavily distort frequency distributions. A 10-character ciphertext may lack standard 'E' or 'T' frequencies entirely, causing frequency analysis to fail or produce false positives.</li>
+                <li><strong>Long Ciphertexts:</strong> Large text bodies closely approximate theoretical language distributions, allowing the automated attack to recover the key with near 100% accuracy almost instantaneously.</li>
+            </ul>
+        </div>
+    </div>
+
+    <!-- 3. RESTRICTED KEY SPACE ATTACK ON TOY ECC -->
+    <div class="section-card">
+        <h2>3. Restricted Key Space Attack vs. Statistical Attack</h2>
+        <p>In our toy implementation, the secp256k1 curve uses modulus $p = 17$ with a very small group order ($N = 18$), drastically restricting the private key space to make manual or script-based verification feasible.</p>
+
+        <h3>Executing the Brute-Force Attack</h3>
+        <p>Given the public output or ciphertext mapping, an attacker can trivially perform a brute-force search across all possible private keys $k \in [1, 18]$:</p>
+        <pre>
+// Pseudo-code for Toy ECC Key Recovery
+let target_point = {x: 5, y: 8}; // Q = 6G
+let current_point = null;
+let G = {x: 1, y: 5};
+
+for (let k = 1; k < 18; k++) {
+    current_point = pointAdd(current_point, G);
+    if (current_point.x === target_point.x && current_point.y === target_point.y) {
+        console.log(`Private key recovered: k = ${k}`);
+        break;
+    }
+}
+        </pre>
+
+        <h3>Key Differences: ECC Brute-Force vs. Caesar Statistical Attack</h3>
+        <ul>
+            <li><strong>Attack Vector:</strong> The Caesar attack exploits <em>language redundancies and statistical predictability</em>. The Toy ECC attack exploits an <em>artificially constrained hardware/mathematical boundary</em> (small key space).</li>
+            <li><strong>Feasibility on Real Systems:</strong> While a Caesar cipher remains insecure regardless of implementation details (due to small keyspace + frequency leakage), a properly configured real-world ECC scheme using <strong>secp256k1</strong> operates over a key space of roughly $\approx 1.15 \times 10^{77}$ ($2^{256}$). A brute-force search over this space is computationally impossible with current or foreseeable physics.</li>
+        </ul>
+    </div>
+
+    <!-- 4. ARCHITECTURAL CONCLUSION -->
+    <div class="section-card">
+        <h2>4. Conclusion & Security Takeaways</h2>
+        <p>The progression from classical ciphers (Caesar) to modern asymmetric structures (ECC) highlights the evolution of defensive cryptography:</p>
+        <ul>
+            <li>Classical systems fail because they maintain data patterns (statistical leakage).</li>
+            <li>Toy models demonstrate mathematical principles clearly but fail in security due to narrow parameter scales.</li>
+            <li>Real-world modern cryptography combines algebraic hardness (ECDLP) with massive entropy spaces to eliminate both statistical and brute-force vulnerabilities.</li>
+        </ul>
+    </div>
+
+</body>
+</html>
