@@ -99,6 +99,21 @@
             .btn:hover {
                 background: #6d28d9;
             }
+
+            button.btn {
+                border: 0;
+                cursor: pointer;
+                font-size: 14px;
+                margin-right: 6px;
+            }
+
+            canvas {
+                max-width: 100%;
+                height: auto;
+                background: #faf7ff;
+                border: 1px solid #ddd6fe;
+                border-radius: 6px;
+            }
         </style>
     </head>
     <body>
@@ -156,10 +171,27 @@
         <div class="homework-card">
             <h2>3. Cryptographic Properties & Discussion</h2>
             <ul>
-                <li><strong>Uniformity and State-Space Limitations:</strong> Although local changes in $k$ yield coordinate shifts that do not follow a simple linear equation ($y = mx + q$), the outputs are strictly bounded within $\mathbb{Z}_{17}$ and exhibit a repeating cyclic order. This proves that the toy model fails to provide secure cryptographic unpredictability, not because of its deterministic nature—since all one-way cryptographic functions and key derivation functions are strictly deterministic—but rather due to the minuscule size of its state group order ($N = 18$).</li>
+                <li><strong>Uniformity and State-Space Limitations:</strong> Although local changes in $k$ yield coordinate shifts that do not follow a simple linear equation ($y = mx + q$), the outputs are strictly bounded within $\mathbb{Z}_{17}$ and exhibit a repeating cyclic order. This proves that the toy model fails to provide secure cryptographic unpredictability, not because of its deterministic nature—since all one-way cryptographic functions and key derivation functions are strictly deterministic—but rather due to the minuscule size of its state group order (the curve group has only 18 points and G generates a subgroup of order 9).</li>
                 <li><strong>Toy vs Real Elliptic Curve:</strong> As the Coordinate Distribution Table shows, the scalar multiplication sequence wraps around into a small cyclic group after a few iterations, causing points to repeat. This results in multiple private keys generating the same public point (collision). In real-world elliptic curves, like Ethereum's secp256k1, the scale of the group order is exponentially higher ($\approx 2^{256}$), making collisions or accidental key overlaps statistically impossible.</li>
                 <li><strong>Avalanche Effect:</strong> Changing $k$ from 6 to 7 completely alters the binary representation of the resulting coordinates. The avalanche effect is a fundamental property of cryptographic hash functions and block ciphers, ensuring high diffusion where a minor input modification radically randomizes the output. In algebraic group structures like elliptic curves, this non-linearity ensures that small variations in the scalar private key yield completely decorrelated public points.</li>
             </ul>
+        </div>
+
+        <!-- PART 4: SLOWED-DOWN VISUAL REPRESENTATION -->
+        <div class="homework-card">
+            <h2>4. Slowed-Down Visual Representation</h2>
+            <p>Every point of the toy curve <code>y² = x³ + 7 (mod 17)</code> is drawn on the 17 × 17 grid (grey). The animation computes G, 2G, 3G, … one step at a time: visited points turn purple, the current point is red and a dashed line joins it to the previous one. The point 6G, the toy public key, is marked with a gold ring.</p>
+
+            <canvas id="viz-canvas" width="536" height="536"></canvas>
+            <p id="viz-info"><code>Press Play or Step.</code></p>
+
+            <button class="btn" id="viz-play">Play</button>
+            <button class="btn" id="viz-step">Step</button>
+            <button class="btn" id="viz-reset">Reset</button>
+            <label for="viz-speed">Delay (ms):</label>
+            <input id="viz-speed" type="range" min="100" max="1500" value="700">
+
+            <p>There is no visible geometric pattern between consecutive points: the multiples of G jump around the grid. This is the visual intuition behind the hardness of the discrete logarithm problem. Here the sequence closes after only a few steps (the order of G is 9), so the problem is trivial.</p>
         </div>
 
         <script>
@@ -247,6 +279,140 @@
                 `;
                 avalancheBody.appendChild(row);
             });
+
+
+            // 4. Slowed-down visual representation
+            (function () {
+                const cv = document.getElementById("viz-canvas");
+                const ctx = cv.getContext("2d");
+                const MARGIN = 30, CELL = 28, K = 6;
+
+                // all points of the curve y^2 = x^3 + 7 (mod p)
+                const curvePts = [];
+                for (let x = 0; x < p; x++) {
+                    for (let y = 0; y < p; y++) {
+                        if ((y * y) % p === (x * x * x + 7) % p) curvePts.push({ x, y });
+                    }
+                }
+
+                // sequence G, 2G, 3G, ... until the point at infinity
+                const seq = [];
+                let pt = G;
+                while (pt) {
+                    seq.push(pt);
+                    pt = pointAdd(pt, G);
+                }
+
+                let idx = -1;
+                let timer = null;
+
+                const pos = P => [MARGIN + P.x * CELL, cv.height - MARGIN - P.y * CELL];
+
+                function draw() {
+                    ctx.clearRect(0, 0, cv.width, cv.height);
+
+                    // grid and axis labels
+                    ctx.strokeStyle = "#e9e1fb";
+                    ctx.fillStyle = "#6b5a8f";
+                    ctx.font = "11px Arial";
+                    ctx.textAlign = "center";
+                    for (let i = 0; i < p; i++) {
+                        const gx = MARGIN + i * CELL;
+                        const gy = cv.height - MARGIN - i * CELL;
+                        ctx.beginPath(); ctx.moveTo(gx, MARGIN - 10); ctx.lineTo(gx, cv.height - MARGIN + 10); ctx.stroke();
+                        ctx.beginPath(); ctx.moveTo(MARGIN - 10, gy); ctx.lineTo(cv.width - MARGIN + 10, gy); ctx.stroke();
+                        ctx.fillText(i, gx, cv.height - 8);
+                        ctx.fillText(i, 10, gy + 4);
+                    }
+
+                    // all points of the curve
+                    ctx.fillStyle = "#c4b5d9";
+                    curvePts.forEach(P => {
+                        const [x, y] = pos(P);
+                        ctx.beginPath(); ctx.arc(x, y, 5, 0, Math.PI * 2); ctx.fill();
+                    });
+
+                    // visited points, lines and labels
+                    for (let i = 0; i <= idx && i < seq.length; i++) {
+                        const [x, y] = pos(seq[i]);
+
+                        if (i > 0) {
+                            const [px, py] = pos(seq[i - 1]);
+                            ctx.strokeStyle = "#7c3aed";
+                            ctx.setLineDash(i === idx ? [5, 4] : []);
+                            ctx.beginPath(); ctx.moveTo(px, py); ctx.lineTo(x, y); ctx.stroke();
+                            ctx.setLineDash([]);
+                        }
+
+                        // gold ring on the toy public key
+                        if (i + 1 === K) {
+                            ctx.strokeStyle = "#d97706";
+                            ctx.lineWidth = 3;
+                            ctx.beginPath(); ctx.arc(x, y, 13, 0, Math.PI * 2); ctx.stroke();
+                            ctx.lineWidth = 1;
+                        }
+
+                        ctx.fillStyle = i === idx ? "#dc2626" : "#5b21b6";
+                        ctx.beginPath(); ctx.arc(x, y, i === idx ? 9 : 6, 0, Math.PI * 2); ctx.fill();
+
+                        ctx.fillStyle = "#1e293b";
+                        ctx.textAlign = "left";
+                        ctx.font = "12px Arial";
+                        ctx.fillText((i + 1) + "G", x + 10, y - 8);
+                    }
+                }
+
+                function stop() {
+                    clearInterval(timer);
+                    timer = null;
+                    document.getElementById("viz-play").textContent = "Play";
+                }
+
+                function step() {
+                    if (idx >= seq.length) { stop(); return; }
+                    idx++;
+                    draw();
+
+                    const info = document.getElementById("viz-info");
+                    if (idx < seq.length) {
+                        const P = seq[idx];
+                        let text = (idx + 1) + "G = (" + P.x + ", " + P.y + ")";
+                        if (idx > 0) text += "   [= " + idx + "G + G]";
+                        if (idx + 1 === K) text += "   ← TOY PUBLIC KEY (k = 6)";
+                        info.innerHTML = "<code>" + text + "</code>";
+                    } else {
+                        info.innerHTML = "<code>" + (seq.length + 1) + "G = O (point at infinity): the order of G is " +
+                            (seq.length + 1) + ", the sequence now repeats</code>";
+                        stop();
+                    }
+                }
+
+                document.getElementById("viz-play").onclick = () => {
+                    if (timer) { stop(); return; }
+                    if (idx >= seq.length) idx = -1;
+                    document.getElementById("viz-play").textContent = "Pause";
+                    step();
+                    if (idx < seq.length) timer = setInterval(step, +document.getElementById("viz-speed").value);
+                };
+
+                document.getElementById("viz-step").onclick = () => { stop(); step(); };
+
+                document.getElementById("viz-reset").onclick = () => {
+                    stop();
+                    idx = -1;
+                    draw();
+                    document.getElementById("viz-info").innerHTML = "<code>Press Play or Step.</code>";
+                };
+
+                document.getElementById("viz-speed").oninput = () => {
+                    if (timer) {
+                        clearInterval(timer);
+                        timer = setInterval(step, +document.getElementById("viz-speed").value);
+                    }
+                };
+
+                draw();
+            })();
         </script>
     </body>
 </html>
