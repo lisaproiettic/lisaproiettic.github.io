@@ -2,7 +2,7 @@
 <html lang="en">
     <head>
         <meta charset="UTF-8">
-        <title>Homework 3 - Cryptanalysis: Classical vs Modern ECC</title>
+        <title>Homework 3 - Statistical Cryptanalysis & Toy ECC Attack</title>
         
         <script>
             window.MathJax = {
@@ -18,7 +18,7 @@
                 font-family: Arial, sans-serif;
                 line-height: 1.6;
                 margin: 40px auto;
-                max-width: 950px;
+                max-width: 900px;
                 background-color: #eddefa;
                 color: #333;
                 padding: 0 20px;
@@ -84,10 +84,6 @@
                 line-height: 1.6;
             }
 
-            .definition-box strong {
-                color: #1e293b;
-            }
-
             code {
                 background: #eef2f7;
                 padding: 2px 6px;
@@ -108,14 +104,14 @@
 
             table {
                 width: 100%;
-                margin: 15px 0;
+                margin: 15px auto;
                 border-collapse: collapse;
             }
 
             th, td {
                 border: 1px solid #e2e8f0;
                 padding: 8px 12px;
-                text-align: center;
+                text-align: left;
                 font-size: 13.5px;
             }
 
@@ -125,9 +121,7 @@
             }
 
             tr:nth-child(even) { background-color: #f8fafc; }
-            ul, ol { padding-left: 20px; }
-            li { margin-bottom: 10px; }
-            .highlight { background-color: #e6f3ff; font-weight: bold; }
+            ul { line-height: 1.6; }
         </style>
     </head>
 <body>
@@ -135,190 +129,104 @@
     <a href="index.html" class="btn-back">&larr; Back to Index</a>
 
     <header>
-        <h1>Homework 3: Cryptanalysis of Classical Ciphers vs. Toy ECC</h1>
-        <p>Comprehensive evaluation of encryption schemes, statistical letter-frequency attacks, and restricted key-space vulnerabilities.</p>
+        <h1>Homework 3: Cryptographic Schemes & Statistical Cryptanalysis</h1>
+        <p>Comparative analysis between Toy ECC (secp256k1), Caesar Cipher, and Cryptanalytic Attack Vectors</p>
     </header>
 
-    <!-- 1. PRACTICAL ENCRYPTION & DECRYPTION SIMULATION -->
+    <!-- 1. TOY ECC & CAESAR ENCRYPTION -->
     <div class="section-card">
-        <h2>1. Practical Message Encryption: Toy ECC vs. Caesar Cipher</h2>
-        <p>To analyze the behavioral divergence between classical and modern cryptographic schemes, we process a structured plaintext sentence through both mechanisms: a classical shift cipher and our established toy elliptic curve scheme ($y^2 = x^3 + 7 \pmod{17}$, with base point $G=(1,5)$).</p>
+        <h2>1. Toy ECC Scheme vs. Caesar Cipher & Message Encryption</h2>
+        <p>Building upon the toy elliptic curve developed in Part 1 ($y^2 = x^3 + 7 \pmod p$), we analyze message encryption and decryption procedures across asymmetric and symmetric primitives using a concrete sample message.</p>
         
-        <div class="definition-box">
-            <strong>Plaintext Message ($M$):</strong> <code>BLOCKCHAIN SECURITY AND CRYPTOGRAPHY</code>
-        </div>
+        <h3>Concrete Example: Encrypting the Message "CYBER"</h3>
+        
+        <h4>A. The Caesar Cipher Implementation</h4>
+        <ul>
+            <li><strong>Key ($k$):</strong> Shift of $3$ positions.</li>
+            <li><strong>Plaintext:</strong> <code>C Y B E R</code> $\rightarrow$ Numeric values: `[2, 24, 1, 4, 17]`</li>
+            <li><strong>Encryption ($C = P + 3 \pmod{26}$):</strong> <code>[5, 1, 4, 7, 20]</code> $\rightarrow$ Ciphertext: <code>F B E H U</code></li>
+            <li><strong>Decryption ($P = C - 3 \pmod{26}$):</strong> Recovers successfully the numeric array <code>[2, 24, 1, 4, 17]</code> $\rightarrow$ <code>C Y B E R</code></li>
+        </ul>
 
-        <h3>A) Caesar Cipher Implementation (Shift $k = 3$)</h3>
-        <p>Applying a monoalphabetic right shift of 3 positions over the Latin alphabet ($\pmod{26}$), preserving spaces:</p>
-        <pre id="caesar-output">Computing Caesar transformation...</pre>
+        <h4>B. Toy ECC Scheme Implementation (EC-ElGamal style)</h4>
+        <ul>
+            <li><strong>Parameters:</strong> Base point $G$, Private key $d$ (restricted scalar), Public key $Q = d \cdot G$.</li>
+            <li><strong>Message Mapping:</strong> Map a character or block index to a valid point on the curve, e.g., $M = (x_m, y_m)$.</li>
+            <li><strong>Encryption:</strong> Choose a random ephemeral scalar $r$. Compute the ciphertext pair $(C_1, C_2)$:
+                $$C_1 = r \cdot G$$
+                $$C_2 = M + r \cdot Q$$
+            </li>
+            <li><strong>Decryption:</strong> Recover the original message point by subtracting the secret multiple of $C_1$:
+                $$M = C_2 - d \cdot C_1$$
+                *(Since $d \cdot C_1 = d(r \cdot G) = r(d \cdot G) = r \cdot Q$, the masking term $r \cdot Q$ is completely canceled out).*
+            </li>
+        </ul>
 
-        <h3>B) Toy Elliptic Curve Scheme Mapping ($Q = kG$)</h3>
-        <p>Using private scalar key $k = 6$, the public base transformation yields point $Q = 6G = (5,8)$. To encrypt multi-character text blocks, characters are mapped to integer values (or coordinates) and blended via scalar multiplication points across $\mathbb{Z}_{17}$. Below is the step-by-step block transformation output generated by the local simulation script:</p>
-        <pre id="ecc-output">Simulating Toy ECC stream encryption...</pre>
-
-        <h3>Comparative Architectural Analysis</h3>
+        <h3>Comparative Summary</h3>
         <table>
             <thead>
                 <tr>
-                    <th>Cryptographic Dimension</th>
-                    <th>Caesar Cipher (Classical)</th>
-                    <th>Toy secp256k1 Scheme (Modern)</th>
+                    <th>Feature</th>
+                    <th>Caesar Cipher</th>
+                    <th>Toy ECC Scheme</th>
                 </tr>
             </thead>
             <tbody>
                 <tr>
-                    <td><strong>Mathematical Principle</strong></td>
-                    <td>Modular arithmetic linear shift ($C \equiv P + k \pmod{26}$)</td>
-                    <td>Algebraic group operations over finite fields ($Q = k \cdot G$)</td>
+                    <td><strong>Type</strong></td>
+                    <td>Symmetric (Monoalphabetic Substitution)</td>
+                    <td>Asymmetric (Public-Key Cryptography)</td>
                 </tr>
                 <tr>
-                    <td><strong>Key Space Size</strong></td>
-                    <td>$\vert{}K\vert{} = 26$ (Trivially small, exhaustive search instant)</td>
-                    <td>$\vert{}K\vert{} = 18$ in toy model; $2^{256}$ in production secp256k1</td>
+                    <td><strong>Key Space</strong></td>
+                    <td>Tiny ($26$ possible shifts)</td>
+                    <td>Restricted in toy model (e.g., $2^{20}$), large in standard ($2^{256}$)</td>
                 </tr>
                 <tr>
-                    <td><strong>Statistical Structure</strong></td>
-                    <td>Preserves plaintext monogram and n-gram letter distributions perfectly</td>
-                    <td>Produces pseudo-random coordinate mappings; completely flattens frequency patterns</td>
+                    <td><strong>Statistical Property</strong></td>
+                    <td>Preserves plaintext letter frequencies (vulnerable)</td>
+                    <td>Provides high entropy and diffusion</td>
                 </tr>
                 <tr>
-                    <td><strong>Shannon Confusion & Diffusion</strong></td>
-                    <td>Absent. Highly vulnerable to linear pattern identification</td>
-                    <td>High structural diffusion; changing individual input bits completely randomizes output points</td>
+                    <td><strong>Mathematical Basis</strong></td>
+                    <td>Modular arithmetic ($\mathbb{Z}_{26}$)</td>
+                    <td>Elliptic Curve Discrete Logarithm Problem (ECDLP)</td>
                 </tr>
             </tbody>
         </table>
     </div>
 
-    <!-- 2. STATISTICAL CRYPTANALYSIS OF THE CAESAR CIPHER -->
+    <!-- 2. STATISTICAL CRYPTANALYSIS OF CAESAR -->
     <div class="section-card">
         <h2>2. Statistical Cryptanalysis of the Caesar Cipher</h2>
-        <p>Because substitution ciphers do not alter the underlying statistical frequencies of the natural language, we can design an automated cryptanalytic algorithm to recover the hidden key without prior knowledge.</p>
-
-        <h3>Statistical Frequency Analysis Engine</h3>
-        <p>The automated script executes the following cryptanalytic pipeline:</p>
-        <ol>
-            <li><strong>Letter Frequency Profiling:</strong> Counts occurrences of characters in the ciphertext and computes normalized frequency percentages.</li>
-            <li><strong>Language Vector Comparison:</strong> Evaluates chi-squared ($\chi^2$) statistics or absolute deviations against standard English/Italian letter distributions (where <code>E</code>, <code>A</code>, and <code>I</code> dominate).</li>
-            <li><strong>Key Recovery:</strong> Identifies the optimal rotational offset minimizing statistical distance, successfully decrypting the ciphertext.</li>
-        </ol>
-
+        <p>Because the Caesar cipher does not mask language redundancy, it is vulnerable to statistical attacks without knowing the key.</p>
+        
         <div class="definition-box">
-            <strong>Live Cryptanalysis Results on Test Corpus:</strong>
-            <pre id="freq-analysis-output">Running frequency distribution analysis...</pre>
+            <strong>Chi-Square ($\chi^2$) Scoring Algorithm:</strong><br>
+            1. Count letter frequencies $O_i$ in the candidate plaintext.<br>
+            2. Compare them against expected English letter frequencies $E_i$.<br>
+            3. Compute $\chi^2 = \sum \frac{(O_i - E_i)^2}{E_i}$.<br>
+            4. The correct key is the shift that minimizes the $\chi^2$ statistic.
         </div>
 
-        <h3>Effectiveness, Text Length Dependency, and Limitations</h3>
+        <h3>Effectiveness & Limitations</h3>
         <ul>
-            <li><strong>Long Ciphertexts:</strong> As text size increases ($N > 200$ characters), empirical letter frequencies converge toward theoretical linguistic expectations. The attack succeeds with near 100% reliability and negligible computational cost.</li>
-            <li><strong>Short Ciphertexts:</strong> For brief snippets ($N < 20$ characters), statistical variance is too high. Common letters like 'E' might be entirely absent or overrepresented by chance (e.g., a sentence dominated by 'O'), leading to false key estimates or complete failure of frequency-based cryptanalysis.</li>
-            <li><strong>Alternative Statistical Approaches:</strong> While monoalphabetic frequency counts suffice for Caesar, advanced classical ciphers require <em>n-gram scoring</em> (digrams/trigrams) and index of coincidence calculations to break polyalphabetic structures.</li>
+            <li><strong>Large Ciphertexts ($\ge 500$ chars):</strong> Extremely effective; empirical frequencies closely match theoretical expectations.</li>
+            <li><strong>Short Ciphertexts ($\le 20$ chars):</strong> Fails reliably due to high statistical variance and noise (missing common letters like 'e' or 't'), requiring n-gram scoring frameworks instead.</li>
         </ul>
     </div>
 
-    <!-- 3. RESTRICTED KEY SPACE ATTACK ON TOY ECC -->
+    <!-- 3. ATTACK ON THE TOY ECC SCHEME -->
     <div class="section-card">
-        <h2>3. Restricted Key Space Attack vs. Statistical Attack</h2>
-        <p>In our toy implementation of secp256k1 over $\mathbb{Z}_{17}$, the group order is constrained to $N = 18$, restricting the private key space to $k \in [1, 18]$. This artificial limitation permits a direct brute-force recovery attack.</p>
-
-        <h3>Brute-Force Key Recovery Script Execution</h3>
-        <p>Given an intercepted public point $Q = (5, 8)$, an exhaustive search over the restricted key space instantly identifies the private scalar:</p>
-        <pre id="brute-output">Executing brute-force search over key space [1, 18]...</pre>
-
-        <h3>Critical Comparison: Toy ECC Exploit vs. Caesar Statistical Attack</h3>
+        <h2>3. Attack on the Toy ECC Scheme & Security Scaling</h2>
+        <p>Restricting the private key space of the secp256k1-derived toy curve to a small range (e.g., $2^{20}$) makes the scheme computationally insecure.</p>
+        
         <ul>
-            <li><strong>Nature of the Vulnerability:</strong> The Caesar attack exploits <em>linguistic redundancy and statistical leakage</em>. Conversely, the Toy ECC attack exploits an <em>artificial parameter constraint</em> (an intentionally minuscule key space).</li>
-            <li><strong>Why Real-World ECC Resists Brute-Force:</strong> A production-grade Ethereum/Bitcoin wallet utilizing standard **secp256k1** operates over a private key space of $2^{256}$ ($\approx 1.15 \times 10^{77}$ possible keys). Even if an attacker harnessed all global computational power for millennia, exhaustive search remains physically impossible. Furthermore, modern ECC outputs exhibit zero statistical correlation with input keys, neutralizing frequency analysis entirely.</li>
+            <li><strong>The Attack:</strong> Utilizing optimized brute-force or Baby-Step Giant-Step (BSGS) algorithms, an attacker can recover the private key $d$ from $Q = d \cdot G$ in $O(\sqrt{N})$ group operations—taking milliseconds for $2^{20}$.</li>
+            <li><strong>Difference vs. Caesar Attack:</strong> The Caesar attack exploits <em>linguistic and statistical redundancy</em> of human text. The Toy ECC attack exploits an <em>architectural/parameter vulnerability</em> (insufficient entropy and restricted key space), while the underlying algebraic hardness of the curve remains sound.</li>
+            <li><strong>Why Real ECC is Secure:</strong> Standard secp256k1 operates over an order $n \approx 2^{256}$. General ECDLP algorithms like Pollard's Rho require $\approx 2^{128}$ operations, making computational inversion physically impossible.</li>
         </ul>
     </div>
 
-    <!-- SCRIPT FOR DYNAMIC CALCULATIONS & OUTPUT GENERATION -->
-    <script>
-        // --- 1. Caesar Cipher Simulation ---
-        const plaintext = "BLOCKCHAIN SECURITY AND CRYPTOGRAPHY";
-        const caesarShift = 3;
-
-        function caesarEncrypt(str, shift) {
-            return str.split('').map(char => {
-                let code = char.charCodeAt(0);
-                if (code >= 65 && code <= 90) { // Uppercase A-Z
-                    return String.fromCharCode(((code - 65 + shift) % 26) + 65);
-                }
-                return char; // Keep spaces/punctuation
-            }).join('');
-        }
-
-        const ciphertextCaesar = caesarEncrypt(plaintext, caesarShift);
-        document.getElementById("caesar-output").textContent = 
-            `Plaintext:  "${plaintext}"\nShift (k):  ${caesarShift}\nCiphertext: "${ciphertextCaesar}"`;
-
-        // --- 2. Toy ECC Simulation ---
-        const p = 17, a = 0;
-        const G = {x: 1, y: 5};
-        const modInv = (n, m) => {
-            n = ((n % m) + m) % m;
-            for (let x = 1; x < m; x++) if ((n * x) % m === 1) return x;
-        };
-        function pointAdd(P1, P2){
-            if (!P1) return P2;
-            if (!P2) return P1;
-            let num, den;
-            if (P1.x === P2.x && P1.y === P2.y) {
-                num = 3 * P1.x * P1.x + a;
-                den = 2 * P1.y;
-            } else if (P1.x === P2.x) { return null; } 
-            else { num = P2.y - P1.y; den = P2.x - P1.x; }
-            let l = (((num * modInv(den, p)) % p) + p) % p;
-            let x3 = (((l * l - P1.x - P2.x) % p) + p) % p;
-            let y3 = (((l * (P1.x - x3) - P1.y) % p ) + p) % p;
-            return { x: x3, y: y3 };
-        }
-
-        let eccLog = "Base Point G = (1, 5) | Curve: y² = x³ + 7 (mod 17)\n";
-        let curr = null;
-        let k_target = 6;
-        let targetPoint = null;
-        for(let i=1; i<=18; i++) {
-            curr = pointAdd(curr, G);
-            if(i <= 6) {
-                eccLog += `${i}G = (${curr ? curr.x : 'O'}, ${curr ? curr.y : 'O'})\n`;
-            }
-            if(i === k_target) targetPoint = curr;
-        }
-        eccLog += `\nSelected Private Key k = ${k_target} => Derived Public Key Q = (${targetPoint.x}, ${targetPoint.y})`;
-        document.getElementById("ecc-output").textContent = eccLog;
-
-        // --- 3. Frequency Analysis Simulation ---
-        let freqCounts = {};
-        let totalLetters = 0;
-        ciphertextCaesar.split('').forEach(c => {
-            if(c >= 'A' && c <= 'Z') {
-                freqCounts[c] = (freqCounts[c] || 0) + 1;
-                totalLetters++;
-            }
-        });
-        let freqStr = `Analyzed Ciphertext Length: ${totalLetters} letters\nTop Ciphertext Frequencies:\n`;
-        Object.entries(freqCounts).sort((a,b) => b[1] - a[1]).slice(0, 5).forEach(([char, count]) => {
-            let pct = ((count / totalLetters) * 100).toFixed(1);
-            freqStr += `- Character '${char}': ${count} occurrences (${pct}%)\n`;
-        });
-        freqStr += `\n[Result] Most frequent ciphertext letter is '${Object.entries(freqCounts).reduce((a, b) => a[1] > b[1] ? a : b)[0]}'.\n` +
-                   `Matching against language model (Expected peak 'E' -> Ciphertext peak 'H') yields recovered shift: k = ${caesarShift}. SUCCESS.`;
-        document.getElementById("freq-analysis-output").textContent = freqStr;
-
-        // --- 4. Brute Force Toy ECC Simulation ---
-        let bruteLog = `Target Public Key Q = (${targetPoint.x}, ${targetPoint.y})\nSearching restricted key space k ∈ [1, 18]...\n`;
-        let testPt = null;
-        let foundK = null;
-        for(let k=1; k<=18; k++) {
-            testPt = pointAdd(testPt, G);
-            if(testPt && testPt.x === targetPoint.x && testPt.y === targetPoint.y) {
-                foundK = k;
-                bruteLog += `[MATCH FOUND] Private key successfully recovered: k = ${k} after ${k} iterations.`;
-                break;
-            }
-        }
-        document.getElementById("brute-output").textContent = bruteLog;
-    </script>
 </body>
 </html>
