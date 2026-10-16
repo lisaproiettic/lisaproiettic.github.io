@@ -127,7 +127,7 @@
     <!-- 1. PIPELINE OVERVIEW -->
     <div class="section-card">
         <h2>1. The Practical Ethereum Wallet Pipeline</h2>
-        <p>An Ethereum wallet does not rely on a single algorithm; it relies on a sequence of standards and cryptographic primitives that, when combined, form the cryptographic pipeline that will transform a user-friendly seed phrase into an Ethereum addess. The exact procedure is the following:</p>
+        <p>An Ethereum wallet does not rely on a single algorithm; it relies on a sequence of standards and cryptographic primitives that, when combined, form the cryptographic pipeline that will transform a user-friendly seed phrase into an Ethereum address. The exact procedure is the following:</p>
         
         <div class="pipeline-flow">Mnemonic (BIP-39) 
 
@@ -160,12 +160,12 @@ Checksummed Address (Mixed-Case)</div>
     <div class="section-card">
         <h2>2. A deep dive into the Ethereum wallet's Standards and Cryptographic Primitives</h2>
         <ul>
-            <li><strong>BIP-39 (Mnemonic Sentence & Seed):</strong> It trasforms entropy (128 to 256 bits of high-quality randomness) into a human-friendly sentence of 12 to 24 words chosen from a standardized list. It then applies PBKDF2 (a Key Derivation Function) using HMAC-SHA512 to stretch the mnemonic into a deterministic 512-bit binary seed.</li>
+            <li><strong>BIP-39 (Mnemonic Sentence & Seed):</strong> It transforms entropy (128 to 256 bits of high-quality randomness) into a human-friendly sentence of 12 to 24 words chosen from a standardized list. It then applies PBKDF2 (a Key Derivation Function) using HMAC-SHA512 to stretch the mnemonic into a deterministic 512-bit binary seed.</li>
             <li><strong>BIP-32 (Hierarchical Deterministic Key Derivation):</strong> It introduces an HD structure where a single master seed can deterministically generate an infinite tree of parent and child key pairs. This eliminates the need to continuously backup new individual private keys.</li>
-            <li><strong>BIP-44 (Multi-Account Path Standard):</strong> It etablishes a logical hierarchy for deterministic paths (e.g., <code>m / purpose / coin_type / account / change / address_index</code>), enabling multi-currency and multi-account support.</li>
+            <li><strong>BIP-44 (Multi-Account Path Standard):</strong> It establishes a logical hierarchy for deterministic paths (e.g., <code>m / purpose / coin_type / account / change / address_index</code>), enabling multi-currency and multi-account support.</li>
             <li><strong>secp256k1 (Elliptic-Curve Cryptography):</strong> It's the specific Koblitz curve used by Ethereum and Bitcoin ($y^2 = x^3 + 7 \pmod p$) to derive public keys from private keys and handle digital signatures via ECDSA.</li>
             <li><strong>Keccak-256 (Hashing Function):</strong> It compresses the public key into a fixed-size output. The rightmost 20 bytes of this hash form the base Ethereum address.</li>
-            <li><strong>EIP-55 (Mixed-Case Checksum):</strong> It's a smart encoding convention that capitalizes specific letters in the address hash to provide built-in error detection against typing mistakes.</li>
+            <li><strong>EIP-55 (Mixed-Case Checksum):</strong> It's a backward-compatible encoding standard introduced on Ethereum to provide built-in error detection against typographical mistakes. The exact algorithm normalizes the hexadecimal address into pure lowercase (excluding the '0x' prefix), computes its Keccak-256 hash, and evaluates each character: an alphabetical character in the address is capitalized if and only if the corresponding nibble (half-byte / 4 bits) in the resulting Keccak-256 digest has a decimal value greater than or equal to 8 (\(\ge 8\)).</li>
         </ul>
     </div>
 
@@ -181,7 +181,7 @@ Checksummed Address (Mixed-Case)</div>
 
         <div class="definition-box">
             <strong>Key Derivation</strong><br>
-            The process of mathematically calculating new keys from an existing master secret (a seed or parent key) using a deterministic one-way function. It works by passing the parent secret and a specific index or path through cryptographic algoritgms or elliptic curve math. Since the keys are derived rather than randomly generated, there's no need to back up every one of them.
+            The process of mathematically calculating new keys from an existing master secret (a seed or parent key) using a deterministic one-way function. It works by passing the parent secret and a specific index or path through cryptographic algorithms or elliptic curve math. Since the keys are derived rather than randomly generated, there's no need to back up every one of them.
         </div>
 
         <div class="definition-box">
@@ -196,12 +196,12 @@ Checksummed Address (Mixed-Case)</div>
 
         <div class="definition-box">
             <strong>Checksums</strong><br>
-            Error-detecting codes added to data to ensure that information has not been corrupted, altered or mistyped during transmission or storage. They are generated through a mathematical algorithm (a hashing or checksum function) that procudes a short string of characters or digits. 
+            Error-detecting codes added to data to ensure that information has not been corrupted, altered or mistyped during transmission or storage. They are generated through a mathematical algorithm (a hashing or checksum function) that produces a short string of characters or digits. 
         </div>
 
         <div class="definition-box">
             <strong>Encoding</strong><br>
-            The process of converting data from one format, system or alphabet into another, using a publicly known, standarized and fully reversible set of rules. Its purpose is to make data compatible with a specific medium, system or human reader. Since the algorithm or the set of rules are public anyone can easily decode the data back to its original form, therefore it does not provide encryption, secrecy or security.
+            The process of converting data from one format, system or alphabet into another, using a publicly known, standardized and fully reversible set of rules. Its purpose is to make data compatible with a specific medium, system or human reader. Since the algorithm or the set of rules are public anyone can easily decode the data back to its original form, therefore it does not provide encryption, secrecy or security.
         </div>
     </div>
 
