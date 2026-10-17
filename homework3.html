@@ -3,7 +3,7 @@
     <head>
         <meta charset="UTF-8">
         <meta name="viewport" content="width=device-width, initial-scale=1">
-        <title>Homework 3 - Encryption, Caesar Cipher and Cryptanalysis</title>
+        <title>Homework 3 - Caesar Cipher vs Toy ECC</title>
  
         <style>
             body {
@@ -166,14 +166,30 @@
     <body>
  
         <header>
-            <h1>Homework 3: Encryption, Caesar Cipher and Statistical Cryptanalysis</h1>
+            <h1>Homework 3: Caesar Cipher vs Toy ECC</h1>
             <p>Toy ECC encryption on secp256k1 with a restricted private key, the Caesar cipher, and attacks on both</p>
             <a href="index.html" class="btn">&larr; Back to Index</a>
         </header>
- 
-        <!-- 1. ECC -->
+
+
+        <!-- 1. CAESAR -->
         <div class="card">
-            <h2>1. Toy ECC Encryption on secp256k1 (ElGamal / ECIES style)</h2>
+            <h2>1. The Caesar Cipher</h2>
+            <p>Each letter is shifted by the key <code>s ∈ {0,…,25}</code>: <code>E(x) = (x + s) mod 26</code>, <code>D(y) = (y − s) mod 26</code>. Case, spaces and punctuation are preserved.</p>
+ 
+            <label for="cmsg">Message</label>
+            <input id="cmsg" value="The cat is on the table" style="width:100%">
+ 
+            <label for="shift">Shift s</label>
+            <input id="shift" type="number" min="0" max="25" value="7" style="width:80px">
+ 
+            <button class="btn" id="b-cae">Encrypt and decrypt</button>
+            <pre id="out-cae"></pre>
+        </div>
+ 
+        <!-- 2. ECC -->
+        <div class="card">
+            <h2>2. Toy ECC Encryption on secp256k1 (ElGamal / ECIES style)</h2>
             <p>This part uses the real secp256k1 parameters (<code>y² = x³ + 7</code> over a 256-bit prime field), but the private key <code>k</code> is drawn from a small range <code>[1, 2<sup>b</sup>]</code>. The curve (and so <code>G</code>) is the real one, so the scheme works exactly as in Ethereum, while the restricted key makes the attack in Section 5 computationally feasible. (The mod-17 curve of Homework 1 has only 18 points, which is too small to give a meaningful key space.)</p>
  
             <h3>Algorithm and role of the keys</h3>
@@ -198,21 +214,7 @@
             <button class="btn" id="b-dec">3. Decrypt with k</button>
             <pre id="out-ecc">Press "Generate keys" to start.</pre>
         </div>
- 
-        <!-- 2. CAESAR -->
-        <div class="card">
-            <h2>2. The Caesar Cipher</h2>
-            <p>Each letter is shifted by the key <code>s ∈ {0,…,25}</code>: <code>E(x) = (x + s) mod 26</code>, <code>D(y) = (y − s) mod 26</code>. Case, spaces and punctuation are preserved.</p>
- 
-            <label for="cmsg">Message</label>
-            <input id="cmsg" value="The cat is on the table" style="width:100%">
- 
-            <label for="shift">Shift s</label>
-            <input id="shift" type="number" min="0" max="25" value="7" style="width:80px">
- 
-            <button class="btn" id="b-cae">Encrypt and decrypt</button>
-            <pre id="out-cae"></pre>
-        </div>
+         
  
         <!-- 3. COMPARISON -->
         <div class="card">
