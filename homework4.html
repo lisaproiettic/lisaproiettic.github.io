@@ -1,0 +1,560 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <title>Homework 4 - Penetration Process: LLN and CLT</title>
+ 
+        <style>
+            body {
+                font-family: Arial, sans-serif;
+                line-height: 1.6;
+                margin: 40px auto;
+                max-width: 960px;
+                background-color: #eddefa;
+                color: #333;
+                padding: 0 20px;
+            }
+ 
+            header {
+                border-bottom: 2px solid #5b21b6;
+                padding-bottom: 10px;
+                margin-bottom: 30px;
+            }
+ 
+            header h1 {
+                color: #5b21b6;
+                margin-bottom: 5px;
+            }
+ 
+            header p {
+                color: #555;
+                margin-top: 0;
+            }
+ 
+            .card {
+                background: #fff;
+                padding: 25px;
+                border-radius: 8px;
+                box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+                margin-bottom: 25px;
+            }
+ 
+            .card h2 {
+                color: #5b21b6;
+                margin-top: 0;
+                border-bottom: 1px solid #eee;
+                padding-bottom: 8px;
+            }
+ 
+            .card h3,
+            .card h4 {
+                color: #444;
+            }
+ 
+            .btn {
+                display: inline-block;
+                background: #5b21b6;
+                color: #fff;
+                padding: 9px 14px;
+                text-decoration: none;
+                border: 0;
+                border-radius: 4px;
+                margin: 6px 6px 6px 0;
+                cursor: pointer;
+                font-size: 14px;
+            }
+ 
+            .btn:hover {
+                background: #6d28d9;
+            }
+ 
+            .btn:focus-visible,
+            input:focus-visible,
+            select:focus-visible {
+                outline: 3px solid #a78bfa;
+                outline-offset: 2px;
+            }
+ 
+            code {
+                background: #eef2f7;
+                padding: 2px 6px;
+                border-radius: 4px;
+                color: #5b21b6;
+            }
+ 
+            .controls label {
+                display: inline-block;
+                margin: 8px 6px 8px 0;
+                font-weight: bold;
+                font-size: 14px;
+            }
+ 
+            input,
+            select {
+                font: inherit;
+                padding: 5px 8px;
+                border: 1px solid #cbd5e1;
+                border-radius: 4px;
+                margin-right: 14px;
+            }
+ 
+            .table-wrap {
+                overflow-x: auto;
+            }
+ 
+            table {
+                border-collapse: collapse;
+                margin: 12px 0;
+                width: 100%;
+            }
+ 
+            th, td {
+                border: 1px solid #e2e8f0;
+                padding: 7px 10px;
+                text-align: center;
+                font-size: 13px;
+            }
+ 
+            th {
+                background: #5b21b6;
+                color: #fff;
+            }
+ 
+            tr:nth-child(even) {
+                background: #f8fafc;
+            }
+ 
+            .grid {
+                display: grid;
+                grid-template-columns: repeat(4, 1fr);
+                gap: 8px;
+            }
+ 
+            .grid2 {
+                display: grid;
+                grid-template-columns: repeat(2, 1fr);
+                gap: 10px;
+            }
+ 
+            canvas {
+                width: 100%;
+                height: auto;
+                background: #faf7ff;
+                border: 1px solid #ddd6fe;
+                border-radius: 6px;
+            }
+ 
+            .note {
+                background: #eef2f7;
+                border-left: 4px solid #5b21b6;
+                padding: 12px 18px;
+                border-radius: 4px;
+                margin: 14px 0;
+            }
+ 
+            @media (max-width: 700px) {
+                .grid { grid-template-columns: repeat(2, 1fr); }
+                .grid2 { grid-template-columns: 1fr; }
+            }
+        </style>
+    </head>
+    <body>
+ 
+        <header>
+            <h1>Homework 4: Penetration Process, Law of Large Numbers and Central Limit Theorem</h1>
+            <p>Monte Carlo study of Sₙ, Sₙ/n and Sₙ/√n for Bernoulli and Rademacher increments</p>
+            <a href="index.html" class="btn">← Back to Index</a>
+        </header>
+ 
+        <!-- 1. MODEL -->
+        <div class="card">
+            <h2>1. Model and Interpretation</h2>
+            <p>An attacker faces <strong>n systems</strong> one after another. The increment <code>Xᵢ</code> is the penetration score obtained on system i, and the increments are i.i.d. with mean <code>μ</code> and variance <code>σ²</code>. The <strong>m attackers</strong> are m independent copies of the whole trajectory, i.e. the Monte Carlo sample on which every distribution below is estimated.</p>
+            <div class="table-wrap"><table>
+                <thead><tr><th>Model</th><th>Xᵢ</th><th>μ = E[X]</th><th>σ² = Var(X)</th><th>Meaning</th></tr></thead>
+                <tbody>
+                    <tr><td>Bernoulli(p)</td><td>{0, 1}</td><td>p</td><td>p(1 − p)</td><td>system penetrated (1) or not (0)</td></tr>
+                    <tr><td>Rademacher</td><td>{−1, +1}</td><td>0</td><td>1</td><td>symmetric case: success (+1) and failure (−1) equally likely</td></tr>
+                </tbody>
+            </table></div>
+            <div class="table-wrap"><table>
+                <thead><tr><th>Quantity</th><th>Mean</th><th>Variance</th><th>Expected behaviour</th></tr></thead>
+                <tbody>
+                    <tr><td>Total score Sₙ</td><td>nμ</td><td>nσ²</td><td>spread grows like √n</td></tr>
+                    <tr><td>Average score Sₙ/n</td><td>μ</td><td>σ²/n</td><td>→ μ in probability (LLN): the variance vanishes</td></tr>
+                    <tr><td>Normalized score Sₙ/√n</td><td>μ√n</td><td>σ²</td><td>constant variance; for μ = 0 it converges in distribution to N(0, σ²) (CLT)</td></tr>
+                </tbody>
+            </table></div>
+            <ul>
+                <li><strong>LLN (in probability):</strong> for every ε &gt; 0, <code>P(|Sₙ/n − μ| &gt; ε) → 0</code>. Chebyshev gives the quantitative bound <code>P ≤ σ²/(nε²)</code>.</li>
+                <li><strong>CLT:</strong> <code>(Sₙ − nμ)/(σ√n) → N(0, 1)</code> in distribution. In the Rademacher case μ = 0 and σ = 1, so this is exactly <code>Sₙ/√n</code>.</li>
+                <li><strong>Bernoulli caveat:</strong> since μ = p ≠ 0, the mean of Sₙ/√n is p√n and diverges; the CLT applies to the <em>standardized</em> sum (Sₙ − np)/√(np(1 − p)).</li>
+            </ul>
+        </div>
+ 
+        <!-- 2. CONTROLS -->
+        <div class="card">
+            <h2>2. Simulation</h2>
+            <p>The same run is used for every table and figure below. The values of n are 10, 100, 1000 and 10000.</p>
+            <div class="controls">
+                <label for="m">Attackers m</label>
+                <select id="m">
+                    <option>500</option>
+                    <option>1000</option>
+                    <option selected>2000</option>
+                    <option>5000</option>
+                </select>
+                <label for="p">Bernoulli p</label>
+                <input id="p" type="number" min="0.01" max="0.99" step="0.01" value="0.3" style="width:70px">
+                <label for="eps">LLN tolerance ε</label>
+                <input id="eps" type="number" min="0.01" max="1" step="0.01" value="0.1" style="width:70px">
+                <button class="btn" id="b-run">Run simulation</button>
+                <label for="model">Model shown</label>
+                <select id="model">
+                    <option value="rad" selected>Rademacher</option>
+                    <option value="bern">Bernoulli</option>
+                </select>
+            </div>
+            <p id="status"><code>Press "Run simulation".</code></p>
+        </div>
+ 
+        <!-- 3. TRAJECTORIES -->
+        <div class="card">
+            <h2>3. Sample Trajectories (8 attackers, 1000 systems)</h2>
+            <p>Left: total score Sᵢ against the number of attacked systems; the dashed curves are μi ± 2σ√i. Right: running average Sᵢ/i on a logarithmic axis; the dashed curves are μ ± 2σ/√i and shrink towards μ.</p>
+            <div class="grid2">
+                <canvas id="cv-sum" width="520" height="280"></canvas>
+                <canvas id="cv-avg" width="520" height="280"></canvas>
+            </div>
+        </div>
+ 
+        <!-- 4. DISTRIBUTIONS -->
+        <div class="card">
+            <h2>4. Distributions of the Three Quantities</h2>
+            <p>Histograms over the m attackers (density scale), with the normal density of the same mean and variance in purple. The horizontal axis shows μ ± 4 standard deviations of each quantity: it widens for Sₙ, shrinks for Sₙ/n and stays fixed for Sₙ/√n.</p>
+            <div id="hists"></div>
+        </div>
+ 
+        <!-- 5. MOMENTS -->
+        <div class="card">
+            <h2>5. Means and Variances Under the Three Normalizations</h2>
+            <h3>Means (empirical / theoretical)</h3>
+            <div class="table-wrap"><table id="tbl-mean"></table></div>
+            <h3>Variances (empirical / theoretical)</h3>
+            <div class="table-wrap"><table id="tbl-var"></table></div>
+            <p>Var(Sₙ) grows linearly in n, Var(Sₙ/n) = σ²/n decays to 0, and Var(Sₙ/√n) = σ² does not depend on n: dividing by √n is the only normalization that keeps a non-degenerate limit.</p>
+        </div>
+ 
+        <!-- 6. LLN -->
+        <div class="card">
+            <h2>6. Law of Large Numbers: Convergence in Probability of Sₙ/n</h2>
+            <div class="table-wrap"><table id="tbl-lln"></table></div>
+            <p>The empirical probability falls to 0 as n grows, always below the Chebyshev bound (which is valid but loose). The last column is the much tighter normal approximation suggested by the CLT. The empirical values themselves have a sampling error of about 1/√m.</p>
+        </div>
+ 
+        <!-- 7. CLT -->
+        <div class="card">
+            <h2>7. Central Limit Theorem: Convergence in Distribution</h2>
+            <p>For the model shown, Z = (Sₙ − nμ)/(σ√n) (equal to Sₙ/√n in the Rademacher case). D is the Kolmogorov–Smirnov distance between the empirical distribution of Z and the standard normal.</p>
+            <div class="table-wrap"><table id="tbl-clt"></table></div>
+            <p id="clt-note"></p>
+        </div>
+ 
+        <!-- 8. DISCUSSION -->
+        <div class="card">
+            <h2>8. Discussion: System Size and Number of Attackers</h2>
+            <ul>
+                <li><strong>Effect of n (number of systems):</strong> the expected total score grows linearly (nμ) and so does its spread, but only like √n. Hence the <em>relative</em> uncertainty σ/(μ√n) shrinks: for a large number of systems the average penetration rate of an attacker is almost deterministic and equal to μ (LLN), while the absolute number of compromised systems still fluctuates by about σ√n. In the symmetric Rademacher case the expected total is 0, but typical excursions are of order √n, so an attacker can be far ahead or behind purely by chance.</li>
+                <li><strong>Effect of m (number of attackers):</strong> m does not change the distribution of any single attacker's score; it only improves the estimate of that distribution (sampling errors of order 1/√m, KS critical value about 1.36/√m). If the m attackers are pooled, the aggregate score T is the sum of m independent Sₙ: <code>E[T] = mnμ</code> and <code>Var(T) = mnσ²</code>, so the aggregate behaves exactly like a single attacker facing mn systems, and the average per system over all attackers has standard deviation σ/√(mn).</li>
+                <li><strong>Normal approximation:</strong> thanks to the CLT, tail probabilities of the total score (for example the chance that an attacker compromises more than a given number of systems) can be approximated by a normal distribution once n is moderately large. For small n and small p the Bernoulli distribution is clearly skewed and the approximation is poor.</li>
+                <li><strong>Limits of the model:</strong> real systems are not identically distributed (some are far more vulnerable) and attackers are not independent (they share tools and vulnerabilities). Positive correlation between increments makes Var(Sₙ) grow faster than n and can break the √n scaling.</li>
+            </ul>
+        </div>
+ 
+        <script>
+            const $ = id => document.getElementById(id);
+            const NS = [10, 100, 1000, 10000];
+            const NP = 1000;      // length of the plotted trajectories
+            const NPATH = 8;      // number of plotted attackers
+            let R = null;         // simulation results
+ 
+            /* ---------- helpers ---------- */
+            const g = x => (Math.abs(x) < 1e-3 && x !== 0) ? x.toExponential(2) : String(+x.toPrecision(4));
+ 
+            function params(model, p) {
+                return model === 'bern'
+                    ? { mu: p, s2: p * (1 - p), rho: p * (1 - p) * ((1 - p) ** 2 + p ** 2), step: 1 }
+                    : { mu: 0, s2: 1, rho: 1, step: 2 };
+            }
+ 
+            const mean = a => a.reduce((s, v) => s + v, 0) / a.length;
+            const vari = a => { const m = mean(a); return a.reduce((s, v) => s + (v - m) ** 2, 0) / (a.length - 1); };
+ 
+            function erf(x) {
+                const s = Math.sign(x);
+                x = Math.abs(x);
+                const t = 1 / (1 + 0.3275911 * x);
+                const y = 1 - (((((1.061405429 * t - 1.453152027) * t) + 1.421413741) * t - 0.284496736) * t + 0.254829592) * t * Math.exp(-x * x);
+                return s * y;
+            }
+            const phi = z => 0.5 * (1 + erf(z / Math.SQRT2));
+ 
+            function ks(Z) {
+                const a = Float64Array.from(Z).sort();
+                const m = a.length;
+                let d = 0;
+                for (let i = 0; i < m; i++) {
+                    const F = phi(a[i]);
+                    d = Math.max(d, Math.abs((i + 1) / m - F), Math.abs(i / m - F));
+                }
+                return d;
+            }
+ 
+            /* ---------- simulation ---------- */
+            function simulate(m, p) {
+                const out = {};
+                for (const model of ['bern', 'rad']) {
+                    const draw = model === 'bern'
+                        ? () => (Math.random() < p ? 1 : 0)
+                        : () => (Math.random() < 0.5 ? 1 : -1);
+ 
+                    const sums = NS.map(() => new Float64Array(m));
+                    const nmax = NS[NS.length - 1];
+                    for (let t = 0; t < m; t++) {
+                        let s = 0, j = 0;
+                        for (let i = 1; i <= nmax; i++) {
+                            s += draw();
+                            if (i === NS[j]) { sums[j][t] = s; j++; }
+                        }
+                    }
+ 
+                    const paths = [];
+                    for (let a = 0; a < NPATH; a++) {
+                        const path = new Float32Array(NP + 1);
+                        let s = 0;
+                        for (let i = 1; i <= NP; i++) { s += draw(); path[i] = s; }
+                        paths.push(path);
+                    }
+                    out[model] = { sums, paths };
+                }
+                return out;
+            }
+ 
+            /* ---------- drawing: trajectories ---------- */
+            function plotPaths(cv, paths, mode, th) {
+                const ctx = cv.getContext('2d');
+                const W = cv.width, H = cv.height, L = 50, Rm = 10, T = 14, B = 28;
+                const sd = Math.sqrt(th.s2);
+                let xLo = 0, xHi, yLo, yHi;
+ 
+                if (mode === 'sum') {
+                    xHi = NP;
+                    yLo = Math.min(0, th.mu * NP) - 3 * sd * Math.sqrt(NP);
+                    yHi = Math.max(0, th.mu * NP) + 3 * sd * Math.sqrt(NP);
+                } else {
+                    xHi = Math.log10(NP);
+                    yLo = th.mu === 0 ? -1 : 0;
+                    yHi = 1;
+                }
+ 
+                const X = v => L + (v - xLo) / (xHi - xLo) * (W - L - Rm);
+                const Y = v => T + (yHi - v) / (yHi - yLo) * (H - T - B);
+ 
+                ctx.clearRect(0, 0, W, H);
+                ctx.font = '11px Arial';
+                ctx.fillStyle = '#6b5a8f';
+                ctx.strokeStyle = '#e9e1fb';
+                ctx.textAlign = 'right';
+                for (let k = 0; k <= 4; k++) {
+                    const v = yLo + (yHi - yLo) * k / 4;
+                    ctx.beginPath(); ctx.moveTo(L, Y(v)); ctx.lineTo(W - Rm, Y(v)); ctx.stroke();
+                    ctx.fillText(g(v), L - 5, Y(v) + 4);
+                }
+                ctx.textAlign = 'center';
+                (mode === 'sum' ? [0, 250, 500, 750, 1000] : [0, 1, 2, 3]).forEach(t => {
+                    ctx.fillText(mode === 'sum' ? t : Math.pow(10, t), X(t), H - 10);
+                });
+ 
+                ctx.save();
+                ctx.beginPath();
+                ctx.rect(L, T, W - L - Rm, H - T - B);
+                ctx.clip();
+ 
+                // expected value and +/- 2 sigma envelope
+                ctx.strokeStyle = '#6b7280';
+                ctx.setLineDash([5, 4]);
+                for (const sgn of [0, 1, -1]) {
+                    ctx.beginPath();
+                    for (let i = 1; i <= NP; i++) {
+                        const xv = mode === 'sum' ? i : Math.log10(i);
+                        const yv = mode === 'sum'
+                            ? th.mu * i + sgn * 2 * sd * Math.sqrt(i)
+                            : th.mu + sgn * 2 * sd / Math.sqrt(i);
+                        if (i === 1) ctx.moveTo(X(xv), Y(yv)); else ctx.lineTo(X(xv), Y(yv));
+                    }
+                    ctx.stroke();
+                }
+                ctx.setLineDash([]);
+ 
+                // trajectories
+                paths.forEach((path, a) => {
+                    ctx.strokeStyle = `hsla(${250 + a * 12}, 65%, 45%, 0.8)`;
+                    ctx.beginPath();
+                    for (let i = (mode === 'sum' ? 0 : 1); i <= NP; i++) {
+                        const xv = mode === 'sum' ? i : Math.log10(i);
+                        const yv = mode === 'sum' ? path[i] : path[i] / i;
+                        if (i === (mode === 'sum' ? 0 : 1)) ctx.moveTo(X(xv), Y(yv)); else ctx.lineTo(X(xv), Y(yv));
+                    }
+                    ctx.stroke();
+                });
+                ctx.restore();
+            }
+ 
+            /* ---------- drawing: histograms ---------- */
+            // S: values of S_n; the displayed variable is Y = c * S_n
+            function drawHist(cv, S, n, c, muY, sdY, step, r0) {
+                const ctx = cv.getContext('2d');
+                const W = cv.width, H = cv.height, pl = 8, pr = 8, pt = 20, pb = 22;
+                const m = S.length;
+                const lo = muY - 4 * sdY, hi = muY + 4 * sdY;
+ 
+                // bin width: multiple of the lattice step of S_n, about 28 bins over the range
+                const sLo = lo / c, sHi = hi / c;
+                const w = Math.max(step, Math.round((sHi - sLo) / 28 / step) * step);
+                const start = Math.floor((sLo - r0) / step) * step + r0 - step / 2;
+                const nb = Math.ceil((sHi - start) / w);
+                const counts = new Array(nb).fill(0);
+                for (let i = 0; i < m; i++) {
+                    const j = Math.floor((S[i] - start) / w);
+                    if (j >= 0 && j < nb) counts[j]++;
+                }
+ 
+                const dens = counts.map(k => k / (m * w * c));
+                const peak = 1 / (sdY * Math.sqrt(2 * Math.PI));
+                const yMax = Math.max(peak, ...dens) * 1.15;
+                const X = v => pl + (v - lo) / (hi - lo) * (W - pl - pr);
+                const Y = d => H - pb - d / yMax * (H - pb - pt);
+ 
+                ctx.clearRect(0, 0, W, H);
+                ctx.fillStyle = '#a78bfa';
+                dens.forEach((d, j) => {
+                    const x0 = X((start + j * w) * c), x1 = X((start + (j + 1) * w) * c);
+                    ctx.fillRect(Math.min(x0, x1), Y(d), Math.abs(x1 - x0) - 0.5, H - pb - Y(d));
+                });
+ 
+                // normal density with the same mean and variance
+                ctx.strokeStyle = '#5b21b6';
+                ctx.lineWidth = 2;
+                ctx.beginPath();
+                for (let k = 0; k <= 120; k++) {
+                    const y = lo + (hi - lo) * k / 120;
+                    const d = Math.exp(-0.5 * ((y - muY) / sdY) ** 2) * peak;
+                    if (k === 0) ctx.moveTo(X(y), Y(d)); else ctx.lineTo(X(y), Y(d));
+                }
+                ctx.stroke();
+                ctx.lineWidth = 1;
+ 
+                ctx.strokeStyle = '#94a3b8';
+                ctx.beginPath(); ctx.moveTo(pl, H - pb); ctx.lineTo(W - pr, H - pb); ctx.stroke();
+                ctx.fillStyle = '#334155';
+                ctx.font = '11px Arial';
+                ctx.textAlign = 'left';  ctx.fillText('n = ' + n, pl + 2, 13);
+                ctx.textAlign = 'left';  ctx.fillText(g(lo), pl, H - 6);
+                ctx.textAlign = 'center'; ctx.fillText(g(muY), X(muY), H - 6);
+                ctx.textAlign = 'right'; ctx.fillText(g(hi), W - pr, H - 6);
+            }
+ 
+            /* ---------- rendering ---------- */
+            function table(id, head, rows) {
+                $(id).innerHTML = '<thead><tr>' + head.map(h => `<th>${h}</th>`).join('') + '</tr></thead><tbody>' +
+                    rows.map(r => '<tr>' + r.map(c => `<td>${c}</td>`).join('') + '</tr>').join('') + '</tbody>';
+            }
+ 
+            function renderAll() {
+                if (!R) return;
+                const model = $('model').value;
+                const eps = +$('eps').value || 0.1;
+                const m = R.m, p = R.p;
+                const th = params(model, p);
+                const sd = Math.sqrt(th.s2);
+                const D = R[model];
+ 
+                plotPaths($('cv-sum'), D.paths, 'sum', th);
+                plotPaths($('cv-avg'), D.paths, 'avg', th);
+ 
+                // histograms: 3 quantities x 4 values of n
+                const Q = [
+                    ['Total score Sₙ', n => 1, n => th.mu * n, n => sd * Math.sqrt(n)],
+                    ['Average score Sₙ/n', n => 1 / n, n => th.mu, n => sd / Math.sqrt(n)],
+                    ['Normalized total score Sₙ/√n', n => 1 / Math.sqrt(n), n => th.mu * Math.sqrt(n), n => sd]
+                ];
+                const box = $('hists');
+                box.innerHTML = '';
+                Q.forEach(([title, c, muY, sdY]) => {
+                    const h = document.createElement('h4');
+                    h.textContent = title;
+                    box.appendChild(h);
+                    const grid = document.createElement('div');
+                    grid.className = 'grid';
+                    box.appendChild(grid);
+                    NS.forEach((n, j) => {
+                        const cv = document.createElement('canvas');
+                        cv.width = 240; cv.height = 150;
+                        grid.appendChild(cv);
+                        drawHist(cv, D.sums[j], n, c(n), muY(n), sdY(n), th.step, model === 'rad' ? n % 2 : 0);
+                    });
+                });
+ 
+                // means and variances
+                const meanRows = [], varRows = [], llnRows = [], cltRows = [];
+                NS.forEach((n, j) => {
+                    const S = Array.from(D.sums[j]);
+                    const mS = mean(S), vS = vari(S);
+                    meanRows.push([n, g(mS), g(th.mu * n), g(mS / n), g(th.mu), g(mS / Math.sqrt(n)), g(th.mu * Math.sqrt(n))]);
+                    varRows.push([n, g(vS), g(th.s2 * n), g(vS / n ** 2), g(th.s2 / n), g(vS / n), g(th.s2)]);
+ 
+                    // LLN
+                    const bad = S.filter(v => Math.abs(v / n - th.mu) > eps).length / m;
+                    const cheb = Math.min(1, th.s2 / (n * eps * eps));
+                    const norm = 2 * (1 - phi(eps * Math.sqrt(n) / sd));
+                    llnRows.push([n, g(bad), g(cheb), g(norm)]);
+ 
+                    // CLT on the standardized sum
+                    const Z = S.map(v => (v - n * th.mu) / (sd * Math.sqrt(n)));
+                    const mz = mean(Z);
+                    const m2 = mean(Z.map(z => (z - mz) ** 2)), m3 = mean(Z.map(z => (z - mz) ** 3)), m4 = mean(Z.map(z => (z - mz) ** 4));
+                    const be = 0.4748 * th.rho / (Math.pow(th.s2, 1.5) * Math.sqrt(n));
+                    cltRows.push([n, g(ks(Z)), g(be), g(m3 / Math.pow(m2, 1.5)), g(m4 / (m2 * m2) - 3)]);
+                });
+ 
+                table('tbl-mean', ['n', 'mean Sₙ', 'nμ', 'mean Sₙ/n', 'μ', 'mean Sₙ/√n', 'μ√n'], meanRows);
+                table('tbl-var', ['n', 'Var Sₙ', 'nσ²', 'Var Sₙ/n', 'σ²/n', 'Var Sₙ/√n', 'σ²'], varRows);
+                table('tbl-lln', ['n', `empirical P(|Sₙ/n − μ| > ${eps})`, 'Chebyshev bound σ²/(nε²)', 'normal approximation'], llnRows);
+                table('tbl-clt', ['n', 'KS distance D', 'Berry–Esseen bound 0.4748ρ/(σ³√n)', 'skewness of Z', 'excess kurtosis of Z'], cltRows);
+ 
+                $('clt-note').innerHTML = model === 'rad'
+                    ? `Rademacher: Z = Sₙ/√n. D decreases roughly like 1/√n (the discreteness of Sₙ makes a floor of this order unavoidable), skewness stays near 0 and the excess kurtosis (theoretical value −2/n) tends to 0. Pure sampling noise alone gives D of about 1/√m ≈ ${(1 / Math.sqrt(m)).toFixed(3)}; the 5% KS critical value is about ${(1.36 / Math.sqrt(m)).toFixed(3)}.`
+                    : `Bernoulli: the plain Sₙ/√n does <strong>not</strong> converge (its mean is p√n), but the standardized sum does. The skewness (theoretical value (1 − 2p)/√(np(1 − p))) is clearly non-zero for small n, so the normal approximation is poor at n = 10 and improves as n grows. The 5% KS critical value is about ${(1.36 / Math.sqrt(m)).toFixed(3)}.`;
+            }
+ 
+            $('b-run').onclick = () => {
+                const m = +$('m').value;
+                const p = Math.min(0.99, Math.max(0.01, +$('p').value || 0.3));
+                $('p').value = p;
+                $('status').innerHTML = '<code>Simulating...</code>';
+                setTimeout(() => {
+                    const t0 = performance.now();
+                    R = simulate(m, p);
+                    R.m = m;
+                    R.p = p;
+                    renderAll();
+                    $('status').innerHTML = `<code>m = ${m} attackers, Bernoulli p = ${p}, n ∈ {${NS.join(', ')}}; computed in ${((performance.now() - t0) / 1000).toFixed(1)} s</code>`;
+                }, 30);
+            };
+ 
+            $('model').onchange = renderAll;
+            $('eps').onchange = renderAll;
+        </script>
+    </body>
+</html>
