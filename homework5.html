@@ -197,7 +197,7 @@
                 and the sample variance is <code>s²<sub>k</sub> = SS<sub>k</sub>/(k−1)</code> (for k ≥ 2); the population-style variance is <code>SS<sub>k</sub>/k</code>.
             </div>
  
-            <h3>The code (core logic: 3 lines)</h3>
+            <h3>The code</h3>
 <pre>let mean = 0, SS = 0;                 // initial values
 for (let k = 1; k &lt;= n; k++) {
     const x = data[k - 1];
