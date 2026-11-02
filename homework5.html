@@ -1,0 +1,460 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <title>Homework 5 - Welford's Recurrences and Sampling Mean and Variance</title>
+ 
+        <style>
+            body {
+                font-family: Arial, sans-serif;
+                line-height: 1.6;
+                margin: 40px auto;
+                max-width: 960px;
+                background-color: #eddefa;
+                color: #333;
+                padding: 0 20px;
+            }
+ 
+            header {
+                border-bottom: 2px solid #5b21b6;
+                padding-bottom: 10px;
+                margin-bottom: 30px;
+            }
+ 
+            header h1 {
+                color: #5b21b6;
+                margin-bottom: 5px;
+            }
+ 
+            header p {
+                color: #555;
+                margin-top: 0;
+            }
+ 
+            .card {
+                background: #fff;
+                padding: 25px;
+                border-radius: 8px;
+                box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+                margin-bottom: 25px;
+            }
+ 
+            .card h2 {
+                color: #5b21b6;
+                margin-top: 0;
+                border-bottom: 1px solid #eee;
+                padding-bottom: 8px;
+            }
+ 
+            .card h3,
+            .card h4 {
+                color: #444;
+            }
+ 
+            .btn {
+                display: inline-block;
+                background: #5b21b6;
+                color: #fff;
+                padding: 9px 14px;
+                text-decoration: none;
+                border: 0;
+                border-radius: 4px;
+                margin: 6px 6px 6px 0;
+                cursor: pointer;
+                font-size: 14px;
+            }
+ 
+            .btn:hover {
+                background: #6d28d9;
+            }
+ 
+            .btn:focus-visible,
+            input:focus-visible,
+            select:focus-visible {
+                outline: 3px solid #a78bfa;
+                outline-offset: 2px;
+            }
+ 
+            code {
+                background: #eef2f7;
+                padding: 2px 6px;
+                border-radius: 4px;
+                color: #5b21b6;
+            }
+ 
+            pre {
+                background: #1e293b;
+                color: #f8fafc;
+                padding: 15px;
+                border-radius: 6px;
+                font-family: 'Courier New', monospace;
+                font-size: 13px;
+                overflow-x: auto;
+                white-space: pre-wrap;
+            }
+ 
+            .controls label {
+                display: inline-block;
+                margin: 8px 6px 8px 0;
+                font-weight: bold;
+                font-size: 14px;
+            }
+ 
+            input,
+            select {
+                font: inherit;
+                padding: 5px 8px;
+                border: 1px solid #cbd5e1;
+                border-radius: 4px;
+                margin-right: 14px;
+            }
+ 
+            .table-wrap {
+                overflow-x: auto;
+            }
+ 
+            table {
+                border-collapse: collapse;
+                margin: 12px 0;
+                width: 100%;
+            }
+ 
+            th, td {
+                border: 1px solid #e2e8f0;
+                padding: 7px 10px;
+                text-align: center;
+                font-size: 13px;
+            }
+ 
+            th {
+                background: #5b21b6;
+                color: #fff;
+            }
+ 
+            tr:nth-child(even) {
+                background: #f8fafc;
+            }
+ 
+            .grid {
+                display: grid;
+                grid-template-columns: repeat(auto-fit, minmax(170px, 1fr));
+                gap: 8px;
+            }
+ 
+            canvas {
+                width: 100%;
+                height: auto;
+                background: #faf7ff;
+                border: 1px solid #ddd6fe;
+                border-radius: 6px;
+            }
+ 
+            .proof {
+                background: #eef2f7;
+                border-left: 4px solid #5b21b6;
+                padding: 12px 18px;
+                border-radius: 4px;
+                margin: 14px 0;
+            }
+        </style>
+    </head>
+    <body>
+ 
+        <header>
+            <h1>Homework 5: Welford's Recurrences and Sampling Mean and Variance</h1>
+            <p>Online computation of mean and variance, and the behaviour of the sampling estimators over m hackers</p>
+            <a href="index.html" class="btn">← Back to Index</a>
+        </header>
+ 
+        <!-- EX 1 -->
+        <div class="card">
+            <h2>Exercise 1: Welford's Recurrence Formulas</h2>
+ 
+            <h3>Starting point: Knuth's recurrence for the mean</h3>
+            <p>Let <code>M<sub>k</sub> = (x₁ + … + x<sub>k</sub>)/k</code> be the mean of the first k values. Since <code>k·M<sub>k</sub> = (k−1)·M<sub>k−1</sub> + x<sub>k</sub></code>, we get</p>
+            <div class="proof"><code>M<sub>k</sub> = M<sub>k−1</sub> + (x<sub>k</sub> − M<sub>k−1</sub>)/k</code></div>
+            <p>The new mean is the old one plus a fraction 1/k of the "surprise" <code>δ = x<sub>k</sub> − M<sub>k−1</sub></code>. No past values need to be stored.</p>
+ 
+            <h3>Same approach for the sum of squares</h3>
+            <p>Define the sum of squares of the deviations <code>SS<sub>k</sub> = Σ<sub>i≤k</sub> (x<sub>i</sub> − M<sub>k</sub>)²</code>. We want <code>SS<sub>k</sub></code> in terms of <code>SS<sub>k−1</sub></code>. Put <code>δ = x<sub>k</sub> − M<sub>k−1</sub></code>. From Knuth's formula:</p>
+            <ul>
+                <li><code>M<sub>k</sub> = M<sub>k−1</sub> + δ/k</code></li>
+                <li><code>x<sub>k</sub> − M<sub>k</sub> = δ − δ/k = δ(k−1)/k</code></li>
+            </ul>
+            <p>For each of the first k−1 values, write <code>x<sub>i</sub> − M<sub>k</sub> = (x<sub>i</sub> − M<sub>k−1</sub>) − δ/k</code> and expand the square:</p>
+            <div class="proof">
+                <code>Σ<sub>i&lt;k</sub> (x<sub>i</sub> − M<sub>k</sub>)² = SS<sub>k−1</sub> − 2(δ/k)·Σ<sub>i&lt;k</sub>(x<sub>i</sub> − M<sub>k−1</sub>) + (k−1)δ²/k²</code><br>
+                The middle sum is 0 (deviations from the mean always add up to zero), so this equals <code>SS<sub>k−1</sub> + (k−1)δ²/k²</code>.
+            </div>
+            <p>Adding the last term <code>(x<sub>k</sub> − M<sub>k</sub>)² = δ²(k−1)²/k²</code>:</p>
+            <div class="proof">
+                <code>SS<sub>k</sub> = SS<sub>k−1</sub> + δ²(k−1)/k² + δ²(k−1)²/k² = SS<sub>k−1</sub> + δ²(k−1)/k</code>
+            </div>
+            <p>Finally, since <code>x<sub>k</sub> − M<sub>k−1</sub> = δ</code> and <code>x<sub>k</sub> − M<sub>k</sub> = δ(k−1)/k</code>, their product is exactly <code>δ²(k−1)/k</code>. Therefore <strong>Welford's formula</strong>:</p>
+            <div class="proof">
+                <code>SS<sub>k</sub> = SS<sub>k−1</sub> + (x<sub>k</sub> − M<sub>k−1</sub>)(x<sub>k</sub> − M<sub>k</sub>)</code><br>
+                and the sample variance is <code>s²<sub>k</sub> = SS<sub>k</sub>/(k−1)</code> (for k ≥ 2); the population-style variance is <code>SS<sub>k</sub>/k</code>.
+            </div>
+ 
+            <h3>The code (core logic: 3 lines)</h3>
+<pre>let mean = 0, SS = 0;                 // initial values
+for (let k = 1; k &lt;= n; k++) {
+    const x = data[k - 1];
+    const delta = x - mean;           // 1) surprise
+    mean += delta / k;                // 2) Knuth's recurrence for the mean
+    SS += delta * (x - mean);         // 3) Welford's recurrence for the sum of squares
+}
+const variance = SS / (n - 1);        // sample variance</pre>
+ 
+            <h3>Step-by-step demonstration</h3>
+            <label for="data"><strong>Data (comma separated):</strong></label>
+            <input id="data" value="4, 7, 13, 16" style="width:300px">
+            <button class="btn" id="b-step">Run Welford</button>
+            <div class="table-wrap"><table id="tbl-step"></table></div>
+            <pre id="out-step"></pre>
+ 
+            <h3>Why not use the textbook formula?</h3>
+            <p>The one-pass formula <code>(Σx² − n·mean²)/(n − 1)</code> subtracts two huge, almost equal numbers when the data are large compared with their spread, and loses all precision. Welford only works with the small deviations. Test data: 10⁹ + {4, 7, 13, 16}, whose exact sample variance is 30.</p>
+            <pre id="out-stab"></pre>
+        </div>
+ 
+        <!-- EX 2 SETUP -->
+        <div class="card">
+            <h2>Exercise 2: Sampling Mean and Variance</h2>
+            <p><strong>Setup.</strong> Each penetration attempt gets an integer score from 0 to 10, drawn from a fixed distribution with theoretical mean <code>μ</code> and variance <code>σ²</code>. There are <strong>m hackers</strong>; each attempts <strong>n systems</strong> and so gets a trajectory of n scores. For each hacker, Welford's formulas give the sampling mean <code>x̄</code> and the sampling variance <code>s² = SS/(n−1)</code>. The page then averages these m values and compares them with μ and σ². It also shows the biased version <code>SS/n</code> to explain why n−1 is used.</p>
+ 
+            <div class="controls">
+                <label for="dist">Distribution</label>
+                <select id="dist">
+                    <option value="bin" selected>Binomial(10, q)</option>
+                    <option value="uni">Uniform on {0, …, 10}</option>
+                </select>
+                <label for="q">q</label>
+                <input id="q" type="number" min="0.05" max="0.95" step="0.05" value="0.3" style="width:70px">
+                <label for="m">Hackers m</label>
+                <select id="m">
+                    <option>500</option>
+                    <option>1000</option>
+                    <option selected>2000</option>
+                    <option>5000</option>
+                </select>
+                <label for="ns">Values of n (2 to 20000, up to 6)</label>
+                <input id="ns" value="2, 5, 10, 50, 200, 1000" style="width:230px">
+                <button class="btn" id="b-run">Run experiment</button>
+            </div>
+            <p id="status"><code>Press "Run experiment".</code></p>
+            <p id="theory"></p>
+        </div>
+ 
+        <!-- RESULTS -->
+        <div class="card">
+            <h2>Results</h2>
+            <h3>Sampling mean x̄</h3>
+            <div class="table-wrap"><table id="tbl-mean"></table></div>
+            <h3>Sampling variance</h3>
+            <div class="table-wrap"><table id="tbl-var"></table></div>
+            <h3>Distribution of the m values for each n</h3>
+            <p>Top row: the m sampling means. Bottom row: the m sampling variances (÷(n−1)). The dashed line is μ (or σ²). Each row uses the same horizontal range for every n, so the narrowing with n is directly visible.</p>
+            <div id="hists"></div>
+        </div>
+ 
+        <!-- DISCUSSION -->
+        <div class="card">
+            <h2>Conclusions</h2>
+            <ul>
+                <li><strong>Unbiasedness.</strong> The average of the m sampling means is very close to μ, and the average of the sampling variances (÷(n−1)) is very close to σ² for <em>every</em> n, even n = 2. Formally <code>E[x̄] = μ</code> and <code>E[s²] = σ²</code>: on average the estimators are right, so they have no systematic error.</li>
+                <li><strong>Why n−1.</strong> The deviations are measured from x̄, not from μ, and the data are always closer to their own mean than to μ: <code>Σ(xᵢ − x̄)² = Σ(xᵢ − μ)² − n(x̄ − μ)²</code>. Dividing by n therefore underestimates σ² by exactly the factor (n−1)/n, as the table shows (the biased column matches σ²(n−1)/n); dividing by n−1 (Bessel's correction) removes this bias. The bias matters mostly for small n.</li>
+                <li><strong>Variability.</strong> A single hacker's x̄ and s² are random: they change from hacker to hacker. The standard deviation of x̄ across hackers matches σ/√n, and that of s² also shrinks roughly like 1/√n. With larger n the estimates concentrate around the true values (consistency); with small n they scatter widely, even if their average is right.</li>
+                <li><strong>Effect of m.</strong> m does not change the distribution of x̄ or s²; it only makes the <em>average</em> over hackers more precise (error about 1/√m). The experiment needs a large m to see the unbiasedness clearly; a single hacker cannot.</li>
+                <li><strong>Why this matters in inferential statistics.</strong> In practice we see only one sample and do not know μ and σ². x̄ and s² are the standard estimators of these unknown parameters, and these results justify using them: they are correct on average and get more accurate as n grows. The known spread σ/√n is the standard error, the basis of confidence intervals and hypothesis tests (such as the t-test), and s² is plugged in when σ² is unknown.</li>
+                <li><strong>Why Welford.</strong> It computes both quantities in a single pass, with O(1) memory, and is numerically stable: ideal for streams of data (such as attack logs) that cannot be stored.</li>
+            </ul>
+        </div>
+ 
+        <script>
+            const $ = id => document.getElementById(id);
+            const g = x => (Math.abs(x) < 1e-3 && x !== 0) ? x.toExponential(2) : String(+x.toPrecision(4));
+ 
+            /* ---------- Exercise 1: demonstration ---------- */
+            function welford(data) {
+                let mean = 0, SS = 0;
+                const steps = [];
+                for (let k = 1; k <= data.length; k++) {
+                    const x = data[k - 1];
+                    const delta = x - mean;
+                    mean += delta / k;
+                    SS += delta * (x - mean);
+                    steps.push({ k, x, delta, mean, SS });
+                }
+                return { mean, SS, steps };
+            }
+ 
+            $('b-step').onclick = () => {
+                const data = $('data').value.split(',').map(s => parseFloat(s)).filter(v => !isNaN(v));
+                if (data.length < 2) { $('out-step').textContent = 'Enter at least two numbers.'; return; }
+ 
+                const w = welford(data);
+                $('tbl-step').innerHTML = '<thead><tr><th>k</th><th>xₖ</th><th>δ = xₖ − Mₖ₋₁</th><th>Mₖ</th><th>SSₖ</th><th>s²ₖ = SSₖ/(k−1)</th></tr></thead><tbody>' +
+                    w.steps.map(s => `<tr><td>${s.k}</td><td>${s.x}</td><td>${g(s.delta)}</td><td>${g(s.mean)}</td><td>${g(s.SS)}</td><td>${s.k > 1 ? g(s.SS / (s.k - 1)) : '-'}</td></tr>`).join('') + '</tbody>';
+ 
+                // two-pass check
+                const n = data.length;
+                const m2 = data.reduce((a, b) => a + b, 0) / n;
+                const ss2 = data.reduce((a, b) => a + (b - m2) ** 2, 0);
+                $('out-step').textContent =
+                    `Welford : mean = ${g(w.mean)},  SS = ${g(w.SS)},  s² = ${g(w.SS / (n - 1))}\n` +
+                    `Two-pass: mean = ${g(m2)},  SS = ${g(ss2)},  s² = ${g(ss2 / (n - 1))}   (direct check with the definition)`;
+            };
+ 
+            (function () {
+                const data = [4, 7, 13, 16].map(v => 1e9 + v);
+                const n = data.length;
+                const sum = data.reduce((a, b) => a + b, 0);
+                const sumsq = data.reduce((a, b) => a + b * b, 0);
+                const naive = (sumsq - sum * sum / n) / (n - 1);
+                const w = welford(data);
+                $('out-stab').textContent =
+                    `Data: 1e9 + {4, 7, 13, 16}   (exact sample variance = 30)\n` +
+                    `Textbook formula (sum of squares): ${naive}\n` +
+                    `Welford                           : ${w.SS / (n - 1)}`;
+            })();
+ 
+            /* ---------- Exercise 2: distribution of the scores ---------- */
+            function makeDist(type, q) {
+                const pmf = [];
+                if (type === 'bin') {
+                    let c = 1;
+                    for (let k = 0; k <= 10; k++) {
+                        pmf.push(c * Math.pow(q, k) * Math.pow(1 - q, 10 - k));
+                        c = c * (10 - k) / (k + 1);
+                    }
+                } else {
+                    for (let k = 0; k <= 10; k++) pmf.push(1 / 11);
+                }
+                const cdf = [];
+                pmf.reduce((s, p, k) => (cdf[k] = s + p), 0);
+ 
+                const mu = pmf.reduce((s, p, k) => s + k * p, 0);
+                const s2 = pmf.reduce((s, p, k) => s + (k - mu) ** 2 * p, 0);
+                const mu4 = pmf.reduce((s, p, k) => s + (k - mu) ** 4 * p, 0);
+ 
+                const sample = () => {
+                    const u = Math.random();
+                    let k = 0;
+                    while (k < 10 && u > cdf[k]) k++;
+                    return k;
+                };
+                return { mu, s2, mu4, sample };
+            }
+ 
+            const mean = a => a.reduce((s, v) => s + v, 0) / a.length;
+            const sd = a => { const m = mean(a); return Math.sqrt(a.reduce((s, v) => s + (v - m) ** 2, 0) / (a.length - 1)); };
+ 
+            function table(id, head, rows) {
+                $(id).innerHTML = '<thead><tr>' + head.map(h => `<th>${h}</th>`).join('') + '</tr></thead><tbody>' +
+                    rows.map(r => '<tr>' + r.map(c => `<td>${c}</td>`).join('') + '</tr>').join('') + '</tbody>';
+            }
+ 
+            function hist(cv, data, lo, hi, ref, label) {
+                const ctx = cv.getContext('2d');
+                const W = cv.width, H = cv.height, pl = 8, pr = 8, pt = 20, pb = 22, nb = 24;
+                const counts = new Array(nb).fill(0);
+                data.forEach(v => {
+                    if (v >= lo && v <= hi) counts[Math.min(nb - 1, Math.floor((v - lo) / (hi - lo) * nb))]++;
+                });
+                const mx = Math.max(...counts, 1);
+                const X = v => pl + (v - lo) / (hi - lo) * (W - pl - pr);
+ 
+                ctx.clearRect(0, 0, W, H);
+                ctx.fillStyle = '#a78bfa';
+                counts.forEach((c, j) => {
+                    const h = c / mx * (H - pb - pt);
+                    ctx.fillRect(pl + j * (W - pl - pr) / nb, H - pb - h, (W - pl - pr) / nb - 1, h);
+                });
+ 
+                ctx.strokeStyle = '#5b21b6';
+                ctx.lineWidth = 2;
+                ctx.setLineDash([5, 4]);
+                ctx.beginPath(); ctx.moveTo(X(ref), pt); ctx.lineTo(X(ref), H - pb); ctx.stroke();
+                ctx.setLineDash([]);
+                ctx.lineWidth = 1;
+ 
+                ctx.strokeStyle = '#94a3b8';
+                ctx.beginPath(); ctx.moveTo(pl, H - pb); ctx.lineTo(W - pr, H - pb); ctx.stroke();
+                ctx.fillStyle = '#334155';
+                ctx.font = '11px Arial';
+                ctx.textAlign = 'left';  ctx.fillText(label, pl + 2, 13);
+                ctx.fillText(g(lo), pl, H - 6);
+                ctx.textAlign = 'right'; ctx.fillText(g(hi), W - pr, H - 6);
+            }
+ 
+            $('b-run').onclick = () => {
+                const m = +$('m').value;
+                const q = Math.min(0.95, Math.max(0.05, +$('q').value || 0.3));
+                $('q').value = q;
+                const ns = [...new Set($('ns').value.split(',').map(s => parseInt(s)).filter(v => v >= 2 && v <= 20000))]
+                    .sort((a, b) => a - b).slice(0, 6);
+                if (!ns.length) { $('status').innerHTML = '<code>Enter at least one n between 2 and 20000.</code>'; return; }
+ 
+                $('status').innerHTML = '<code>Simulating...</code>';
+                setTimeout(() => {
+                    const t0 = performance.now();
+                    const D = makeDist($('dist').value, q);
+                    const res = ns.map(n => {
+                        const means = new Float64Array(m), vars = new Float64Array(m), varsB = new Float64Array(m);
+                        for (let h = 0; h < m; h++) {
+                            let mn = 0, SS = 0;
+                            for (let k = 1; k <= n; k++) {
+                                const x = D.sample();
+                                const delta = x - mn;
+                                mn += delta / k;
+                                SS += delta * (x - mn);
+                            }
+                            means[h] = mn;
+                            vars[h] = SS / (n - 1);
+                            varsB[h] = SS / n;
+                        }
+                        return { n, means: Array.from(means), vars: Array.from(vars), varsB: Array.from(varsB) };
+                    });
+ 
+                    $('theory').innerHTML = `Theoretical values of the chosen distribution: <code>μ = ${g(D.mu)}</code>, <code>σ² = ${g(D.s2)}</code> (σ = ${g(Math.sqrt(D.s2))}).`;
+ 
+                    table('tbl-mean',
+                        ['n', 'average of the m sampling means', 'μ', 'std. dev. of x̄ across hackers', 'theory σ/√n'],
+                        res.map(r => [r.n, g(mean(r.means)), g(D.mu), g(sd(r.means)), g(Math.sqrt(D.s2 / r.n))]));
+ 
+                    table('tbl-var',
+                        ['n', 'average of s² (÷(n−1))', 'σ²', 'average of SS/n (÷n)', 'σ²(n−1)/n', 'std. dev. of s² across hackers', 'theory'],
+                        res.map(r => [r.n, g(mean(r.vars)), g(D.s2), g(mean(r.varsB)), g(D.s2 * (r.n - 1) / r.n), g(sd(r.vars)),
+                            g(Math.sqrt((D.mu4 - (r.n - 3) / (r.n - 1) * D.s2 ** 2) / r.n))]));
+ 
+                    // histograms with common ranges for each row
+                    const w0 = 4 * Math.sqrt(D.s2 / ns[0]);
+                    const loM = D.mu - w0, hiM = D.mu + w0;
+                    const hiV = D.s2 + 4 * sd(res[0].vars);
+                    const box = $('hists');
+                    box.innerHTML = '';
+                    [['x̄', r => r.means, loM, hiM, D.mu], ['s²', r => r.vars, 0, hiV, D.s2]].forEach(([name, f, lo, hi, ref]) => {
+                        const h = document.createElement('h4');
+                        h.textContent = name === 'x̄' ? 'Sampling means x̄' : 'Sampling variances s²';
+                        box.appendChild(h);
+                        const grid = document.createElement('div');
+                        grid.className = 'grid';
+                        box.appendChild(grid);
+                        res.forEach(r => {
+                            const cv = document.createElement('canvas');
+                            cv.width = 240; cv.height = 150;
+                            grid.appendChild(cv);
+                            hist(cv, f(r), lo, hi, ref, 'n = ' + r.n);
+                        });
+                    });
+ 
+                    $('status').innerHTML = `<code>m = ${m} hackers, n ∈ {${ns.join(', ')}}; computed in ${((performance.now() - t0) / 1000).toFixed(1)} s</code>`;
+                }, 30);
+            };
+ 
+            $('b-step').click();
+        </script>
+    </body>
+</html>
