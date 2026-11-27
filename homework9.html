@@ -1,0 +1,597 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <title>Homework 9 - Correlation and Regression</title>
+
+        <style>
+            body {
+                font-family: Arial, sans-serif;
+                line-height: 1.6;
+                margin: 40px auto;
+                max-width: 980px;
+                background-color: #eddefa;
+                color: #333;
+                padding: 0 20px;
+            }
+
+            header {
+                border-bottom: 2px solid #5b21b6;
+                padding-bottom: 10px;
+                margin-bottom: 30px;
+            }
+
+            header h1 {
+                color: #5b21b6;
+                margin-bottom: 5px;
+            }
+
+            header p {
+                color: #555;
+                margin-top: 0;
+            }
+
+            .card {
+                background: #fff;
+                padding: 25px;
+                border-radius: 8px;
+                box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+                margin-bottom: 25px;
+            }
+
+            .card h2 {
+                color: #5b21b6;
+                margin-top: 0;
+                border-bottom: 1px solid #eee;
+                padding-bottom: 8px;
+            }
+
+            .card h3 {
+                color: #444;
+            }
+
+            .btn {
+                display: inline-block;
+                background: #5b21b6;
+                color: #fff;
+                padding: 9px 14px;
+                text-decoration: none;
+                border: 0;
+                border-radius: 4px;
+                margin: 6px 6px 6px 0;
+                cursor: pointer;
+                font-size: 14px;
+            }
+
+            .btn:hover {
+                background: #6d28d9;
+            }
+
+            .btn:focus-visible,
+            input:focus-visible,
+            select:focus-visible,
+            textarea:focus-visible {
+                outline: 3px solid #a78bfa;
+                outline-offset: 2px;
+            }
+
+            code {
+                background: #eef2f7;
+                padding: 2px 6px;
+                border-radius: 4px;
+                color: #5b21b6;
+            }
+
+            pre {
+                background: #1e293b;
+                color: #f8fafc;
+                padding: 15px;
+                border-radius: 6px;
+                font-family: 'Courier New', monospace;
+                font-size: 13px;
+                overflow-x: auto;
+                white-space: pre-wrap;
+            }
+
+            .controls label {
+                display: inline-block;
+                margin: 8px 6px 8px 0;
+                font-weight: bold;
+                font-size: 14px;
+            }
+
+            input,
+            select,
+            textarea {
+                font: inherit;
+                padding: 5px 8px;
+                border: 1px solid #cbd5e1;
+                border-radius: 4px;
+                margin-right: 14px;
+            }
+
+            textarea {
+                width: 100%;
+                box-sizing: border-box;
+                font-family: 'Courier New', monospace;
+                font-size: 13px;
+            }
+
+            .table-wrap {
+                overflow-x: auto;
+            }
+
+            table {
+                border-collapse: collapse;
+                margin: 12px 0;
+                width: 100%;
+            }
+
+            th, td {
+                border: 1px solid #e2e8f0;
+                padding: 6px 10px;
+                text-align: center;
+                font-size: 13px;
+            }
+
+            th {
+                background: #5b21b6;
+                color: #fff;
+            }
+
+            td.l {
+                text-align: left;
+            }
+
+            tr:nth-child(even) {
+                background: #f8fafc;
+            }
+
+            td.ok { background: #dcfce7; }
+
+            canvas {
+                width: 100%;
+                max-width: 720px;
+                height: auto;
+                background: #faf7ff;
+                border: 1px solid #ddd6fe;
+                border-radius: 6px;
+            }
+
+            .proof {
+                background: #eef2f7;
+                border-left: 4px solid #5b21b6;
+                padding: 12px 18px;
+                border-radius: 4px;
+                margin: 14px 0;
+            }
+        </style>
+    </head>
+    <body>
+
+        <header>
+            <h1>Homework 9: Correlation and Regression</h1>
+            <p>Covariance and correlation, the two regression lines, r as the geometric mean of the slopes, and independence ⇒ uncorrelation</p>
+            <a href="index.html" class="btn">← Back to Index</a>
+        </header>
+
+        <!-- 1. CORRELATION -->
+        <div class="card">
+            <h2>1. Correlation</h2>
+            <p>Given paired observations (x₁, y₁), …, (x<sub>n</sub>, y<sub>n</sub>), write x̄ and ȳ for the means and</p>
+            <div class="proof">
+                <code>S<sub>xx</sub> = Σ(xᵢ − x̄)²</code>, &nbsp; <code>S<sub>yy</sub> = Σ(yᵢ − ȳ)²</code>, &nbsp; <code>S<sub>xy</sub> = Σ(xᵢ − x̄)(yᵢ − ȳ) = Σxᵢyᵢ − n·x̄·ȳ</code><br>
+                sample covariance <code>s<sub>xy</sub> = S<sub>xy</sub>/(n − 1)</code>, variances <code>s<sub>x</sub>² = S<sub>xx</sub>/(n − 1)</code>, <code>s<sub>y</sub>² = S<sub>yy</sub>/(n − 1)</code><br>
+                <strong>Pearson correlation coefficient:</strong> <code>r = s<sub>xy</sub> / (s<sub>x</sub> s<sub>y</sub>) = S<sub>xy</sub> / √(S<sub>xx</sub> S<sub>yy</sub>)</code>
+            </div>
+            <p>For random variables the same quantities are <code>Cov(X, Y) = E[(X − μ<sub>X</sub>)(Y − μ<sub>Y</sub>)] = E[XY] − E[X]E[Y]</code> and <code>ρ = Cov(X, Y)/(σ<sub>X</sub> σ<sub>Y</sub>)</code>. The covariance says whether the two variables tend to be above/below their means together (positive) or in opposite ways (negative), but its size depends on the units; dividing by the standard deviations gives a unit-free number.</p>
+            <h3>Properties</h3>
+            <ul>
+                <li><strong>−1 ≤ r ≤ 1</strong> (proved in section 2), with |r| = 1 exactly when all the points lie on a straight line (r = +1 increasing, −1 decreasing).</li>
+                <li><strong>Invariance:</strong> replacing X by aX + b and Y by cY + d (a, c &gt; 0) does not change r; if a·c &lt; 0 only the sign changes. So r does not depend on units or origin.</li>
+                <li><strong>It measures only <em>linear</em> association.</strong> r ≈ 0 does not mean "no relationship": a perfect parabola can have r = 0 (see section 4 and the datasets below). Anscombe's four datasets have the same r ≈ 0.816 and yet look completely different.</li>
+                <li><strong>Sensitive to outliers</strong> and to restricted ranges of the data.</li>
+                <li><strong>Correlation is not causation:</strong> as in Homework 7, an association can come from a common cause, reverse causation or chance.</li>
+            </ul>
+        </div>
+
+        <!-- 2. REGRESSION -->
+        <div class="card">
+            <h2>2. Regression: Solving for a and b</h2>
+            <p><strong>Problem.</strong> Find the line <code>ŷ = a + b·x</code> that best predicts y from x, in the sense of least squares: minimise the sum of the squared vertical errors</p>
+            <div class="proof"><code>S(a, b) = Σ (yᵢ − a − b·xᵢ)²</code></div>
+            <h3>Solution by calculus (normal equations)</h3>
+            <div class="proof">
+                <code>∂S/∂a = −2 Σ (yᵢ − a − b xᵢ) = 0 &nbsp;⇒&nbsp; Σyᵢ = n·a + b·Σxᵢ &nbsp;⇒&nbsp; a = ȳ − b·x̄</code><br>
+                <code>∂S/∂b = −2 Σ xᵢ(yᵢ − a − b xᵢ) = 0 &nbsp;⇒&nbsp; Σxᵢyᵢ = a·Σxᵢ + b·Σxᵢ²</code><br>
+                Substituting a = ȳ − b x̄ in the second equation: <code>Σxᵢyᵢ − n x̄ ȳ = b (Σxᵢ² − n x̄²)</code>, that is
+                <code>b = S<sub>xy</sub> / S<sub>xx</sub> = s<sub>xy</sub> / s<sub>x</sub>²</code>.
+            </div>
+            <p>It is a minimum: the Hessian of S is [[2n, 2Σx], [2Σx, 2Σx²]], with determinant 4(nΣx² − (Σx)²) = 4n·S<sub>xx</sub> &gt; 0 as soon as the xᵢ are not all equal.</p>
+            <h3>Alternative derivation without derivatives</h3>
+            <p>Put uᵢ = xᵢ − x̄ and vᵢ = yᵢ − ȳ (so Σu = Σv = 0). Then yᵢ − a − bxᵢ = (vᵢ − b uᵢ) + (ȳ − a − b x̄), and the cross term vanishes, so</p>
+            <div class="proof"><code>S(a, b) = Σ (vᵢ − b uᵢ)² + n (ȳ − a − b x̄)² = S<sub>yy</sub> − 2b S<sub>xy</sub> + b² S<sub>xx</sub> + n (ȳ − a − b x̄)²</code></div>
+            <p>The second term is zero for a = ȳ − b x̄; the first is a parabola in b with minimum at b = S<sub>xy</sub>/S<sub>xx</sub>. The line always passes through the point of means (x̄, ȳ).</p>
+
+            <h3>The two regression lines</h3>
+            <p>The roles of x and y are not symmetric. Minimising the vertical errors gives the regression of Y on X; minimising the horizontal errors gives the regression of X on Y:</p>
+            <div class="table-wrap"><table>
+                <thead><tr><th></th><th>Y on X</th><th>X on Y</th></tr></thead>
+                <tbody>
+                    <tr><td class="l">Line</td><td>ŷ = a<sub>yx</sub> + b<sub>yx</sub>·x</td><td>x̂ = a<sub>xy</sub> + b<sub>xy</sub>·y</td></tr>
+                    <tr><td class="l">Slope</td><td><code>b<sub>yx</sub> = S<sub>xy</sub>/S<sub>xx</sub> = r·s<sub>y</sub>/s<sub>x</sub></code></td><td><code>b<sub>xy</sub> = S<sub>xy</sub>/S<sub>yy</sub> = r·s<sub>x</sub>/s<sub>y</sub></code></td></tr>
+                    <tr><td class="l">Intercept</td><td><code>a<sub>yx</sub> = ȳ − b<sub>yx</sub> x̄</code></td><td><code>a<sub>xy</sub> = x̄ − b<sub>xy</sub> ȳ</code></td></tr>
+                </tbody>
+            </table></div>
+            <p>Both lines pass through (x̄, ȳ). Drawn in the same (x, y) plane, the second one has slope 1/b<sub>xy</sub> = S<sub>yy</sub>/S<sub>xy</sub>, which is steeper than b<sub>yx</sub> unless |r| = 1: the two lines coincide only for a perfect linear relation, and they are perpendicular (horizontal and vertical) when r = 0.</p>
+
+            <h3>Relation between r and the regression coefficients</h3>
+            <div class="proof">
+                <code>b<sub>yx</sub> · b<sub>xy</sub> = (S<sub>xy</sub>/S<sub>xx</sub>)(S<sub>xy</sub>/S<sub>yy</sub>) = S<sub>xy</sub>² / (S<sub>xx</sub> S<sub>yy</sub>) = r²</code><br>
+                Both slopes have the sign of S<sub>xy</sub>, which is the sign of r. Hence <strong><code>r = ± √(b<sub>yx</sub> · b<sub>xy</sub>)</code></strong>, i.e. |r| is the geometric mean of the two regression coefficients and r has their common sign.
+            </div>
+            <ul>
+                <li><strong>Why |r| ≤ 1.</strong> At the optimum, <code>SSE = S<sub>yy</sub> − b<sub>yx</sub>² S<sub>xx</sub> = S<sub>yy</sub> − S<sub>xy</sub>²/S<sub>xx</sub> = S<sub>yy</sub>(1 − r²)</code>. Since SSE ≥ 0, r² ≤ 1; and r² = 1 exactly when SSE = 0 (all points on the line).</li>
+                <li><strong>Coefficient of determination:</strong> <code>R² = 1 − SSE/SST = r²</code> is the fraction of the variance of y explained by the linear dependence on x.</li>
+                <li><strong>Regression to the mean:</strong> in standardised variables the line is ẑ<sub>y</sub> = r·z<sub>x</sub>. Since |r| &lt; 1, an individual 2 standard deviations above the mean in x is predicted to be only 2r above the mean in y.</li>
+            </ul>
+        </div>
+
+        <!-- 3. INTERACTIVE -->
+        <div class="card">
+            <h2>3. Computation on a Dataset</h2>
+            <div class="controls">
+                <label for="ds">Dataset</label>
+                <select id="ds">
+                    <option value="an1">Anscombe I</option>
+                    <option value="an2">Anscombe II (curved)</option>
+                    <option value="an3">Anscombe III (one outlier)</option>
+                    <option value="an4">Anscombe IV (one leverage point)</option>
+                    <option value="lin" selected>Synthetic: hours of training vs score</option>
+                    <option value="quad">Perfect parabola y = x² (r = 0)</option>
+                    <option value="gen">Generated bivariate normal</option>
+                    <option value="custom">Custom data (below)</option>
+                </select>
+                <label for="gn">n</label>
+                <input id="gn" type="number" min="5" max="2000" value="100" style="width:70px">
+                <label for="grho">ρ</label>
+                <input id="grho" type="number" min="-1" max="1" step="0.1" value="0.6" style="width:70px">
+                <label for="resid">Show residuals</label>
+                <select id="resid">
+                    <option value="none">none</option>
+                    <option value="v">vertical (Y on X)</option>
+                    <option value="h">horizontal (X on Y)</option>
+                </select>
+            </div>
+            <p>"Generated bivariate normal" uses n and ρ (a new sample at each run). The Anscombe quartet is a classical set of four datasets with almost identical statistics. The "training vs score" data are synthetic, generated for this exercise. For your own data, paste one pair <code>x, y</code> per line:</p>
+            <textarea id="raw" rows="5">1, 2.1
+2, 3.9
+3, 6.2
+4, 7.8
+5, 10.1
+6, 12.2
+7, 13.8
+8, 16.1</textarea>
+            <label><input type="checkbox" id="hdr"> first row is a header</label>
+            <button class="btn" id="b-run">Compute</button>
+            <p id="ds-info"></p>
+
+            <canvas id="cv" width="720" height="440"></canvas>
+            <p>Purple: regression of Y on X (vertical errors). Red: regression of X on Y (horizontal errors), drawn in the same plane. Black ring: point of means (x̄, ȳ), through which both lines pass.</p>
+
+            <h3>Summary statistics</h3>
+            <div class="table-wrap"><table id="t-sum"></table></div>
+            <h3>The two regression lines</h3>
+            <div id="lines"></div>
+            <h3>Verification</h3>
+            <div class="table-wrap"><table id="t-ver"></table></div>
+            <h3>Check that (a, b) is the minimum of S(a, b)</h3>
+            <p>Moving a or b away from the solution always increases the sum of squared errors:</p>
+            <div class="table-wrap"><table id="t-pert"></table></div>
+            <h3>Is the correlation different from zero?</h3>
+            <div class="table-wrap"><table id="t-inf"></table></div>
+            <p id="comment"></p>
+        </div>
+
+        <!-- 4. PROOF -->
+        <div class="card">
+            <h2>4. Independence Implies Uncorrelation</h2>
+            <div class="proof"><strong>Theorem.</strong> If X and Y are independent random variables with finite variances (and σ<sub>X</sub>, σ<sub>Y</sub> &gt; 0), then Cov(X, Y) = 0, hence ρ(X, Y) = 0.</div>
+            <p><strong>Proof.</strong> Since Cov(X, Y) = E[XY] − E[X]E[Y], it is enough to show E[XY] = E[X]E[Y].</p>
+            <ul>
+                <li><strong>Discrete case.</strong> Independence means P(X = x, Y = y) = P(X = x)·P(Y = y) for all x, y. Then
+                    <code>E[XY] = Σ<sub>x</sub> Σ<sub>y</sub> x·y·P(X = x, Y = y) = Σ<sub>x</sub> Σ<sub>y</sub> x·y·P(X = x)P(Y = y) = (Σ<sub>x</sub> x P(X = x)) (Σ<sub>y</sub> y P(Y = y)) = E[X]E[Y]</code>.</li>
+                <li><strong>Continuous case.</strong> Independence means that the joint density factorises, f(x, y) = f<sub>X</sub>(x) f<sub>Y</sub>(y). Then
+                    <code>E[XY] = ∬ x y f<sub>X</sub>(x) f<sub>Y</sub>(y) dx dy = (∫ x f<sub>X</sub>(x) dx)(∫ y f<sub>Y</sub>(y) dy) = E[X]E[Y]</code>
+                    (Fubini's theorem applies because E|XY| = E|X|·E|Y| &lt; ∞, finite since the variances are finite.)</li>
+                <li><strong>General case.</strong> Independence means that the joint law is the product of the marginal laws; the same factorisation follows from Fubini–Tonelli.</li>
+            </ul>
+            <p>Therefore Cov(X, Y) = E[X]E[Y] − E[X]E[Y] = 0 and ρ = 0. ∎</p>
+            <p><strong>Remark.</strong> Independence is much stronger: it gives E[g(X)h(Y)] = E[g(X)]E[h(Y)] for <em>all</em> (bounded) functions g, h, while uncorrelation is the same statement only for g(x) = x and h(y) = y, i.e. it rules out only <em>linear</em> association.</p>
+
+            <h3>The converse is false</h3>
+            <p>Let X be N(0, 1) and Y = X². Then Y is completely determined by X, so they are not independent (for instance P(Y &gt; 1 | |X| &gt; 1) = 1, while P(Y &gt; 1) ≈ 0.317). Yet E[X] = 0 and E[XY] = E[X³] = 0 (odd moments of a symmetric law vanish), so Cov(X, Y) = 0. The same happens for the "perfect parabola" dataset above (r = 0 although y = x²). The converse is true in one important case: for a <em>jointly normal</em> pair, uncorrelated ⇔ independent (with ρ = 0 the joint density factorises).</p>
+
+            <h3>Simulation</h3>
+            <p>For independent N(0, 1) samples of size n the sample correlation r is not exactly 0, but fluctuates around 0 with standard deviation 1/√(n − 1) (the √n law again). For the pair (X, X²) the correlation is also near 0, yet the variables are strongly dependent: the correlation between |X| and Y = X² is about 0.94 (theory), which the linear coefficient r(X, Y) completely misses.</p>
+            <button class="btn" id="b-sim">Simulate (2000 samples for each n)</button>
+            <div class="table-wrap"><table id="t-sim"></table></div>
+        </div>
+
+        <!-- 5. CONCLUSIONS -->
+        <div class="card">
+            <h2>5. Conclusions</h2>
+            <ul>
+                <li>Correlation measures the strength and direction of the <em>linear</em> association; regression turns it into a prediction rule. The slope of each regression line is r times a ratio of standard deviations, and r² is the share of variance explained.</li>
+                <li>There are two regression lines. They meet at the point of means and coincide only when |r| = 1. The product of the two slopes is r², so |r| is their geometric mean, as verified numerically above.</li>
+                <li>Independence ⇒ uncorrelation, but uncorrelation does not imply independence. Zero correlation excludes only linear dependence; a plot of the data should always accompany r (Anscombe).</li>
+                <li>A strong correlation, even a significant one, is not evidence of causation.</li>
+            </ul>
+        </div>
+
+        <script>
+            const $ = id => document.getElementById(id);
+            const g = x => !isFinite(x) ? String(x) : x === 0 ? '0' : (Math.abs(x) < 1e-3 || Math.abs(x) >= 1e6) ? x.toExponential(3) : String(+x.toPrecision(6));
+
+            function table(id, head, rows) {
+                $(id).innerHTML = '<thead><tr>' + head.map(h => `<th>${h}</th>`).join('') + '</tr></thead><tbody>' +
+                    rows.map(r => '<tr>' + r.map((c, k) => `<td class="${k === 0 ? 'l' : ''}">${c}</td>`).join('') + '</tr>').join('') + '</tbody>';
+            }
+
+            function randn() {
+                const u = 1 - Math.random(), v = Math.random();
+                return Math.sqrt(-2 * Math.log(u)) * Math.cos(2 * Math.PI * v);
+            }
+
+            /* ---------- special functions for the p-value of r ---------- */
+            function lgamma(x) {
+                const c = [0.99999999999980993, 676.5203681218851, -1259.1392167224028, 771.32342877765313, -176.61502916214059, 12.507343278686905, -0.13857109526572012, 9.9843695780195716e-6, 1.5056327351493116e-7];
+                if (x < 0.5) return Math.log(Math.PI / Math.sin(Math.PI * x)) - lgamma(1 - x);
+                x -= 1;
+                let a = c[0];
+                const t = x + 7.5;
+                for (let i = 1; i < 9; i++) a += c[i] / (x + i);
+                return 0.5 * Math.log(2 * Math.PI) + (x + 0.5) * Math.log(t) - t + Math.log(a);
+            }
+
+            function betacf(a, b, x) {
+                const tiny = 1e-300, qab = a + b, qap = a + 1, qam = a - 1;
+                let c = 1, d = 1 - qab * x / qap;
+                if (Math.abs(d) < tiny) d = tiny;
+                d = 1 / d;
+                let h = d;
+                for (let m = 1; m <= 300; m++) {
+                    const m2 = 2 * m;
+                    let aa = m * (b - m) * x / ((qam + m2) * (a + m2));
+                    d = 1 + aa * d; if (Math.abs(d) < tiny) d = tiny;
+                    c = 1 + aa / c; if (Math.abs(c) < tiny) c = tiny;
+                    d = 1 / d; h *= d * c;
+                    aa = -(a + m) * (qab + m) * x / ((a + m2) * (qap + m2));
+                    d = 1 + aa * d; if (Math.abs(d) < tiny) d = tiny;
+                    c = 1 + aa / c; if (Math.abs(c) < tiny) c = tiny;
+                    d = 1 / d;
+                    const del = d * c;
+                    h *= del;
+                    if (Math.abs(del - 1) < 3e-14) break;
+                }
+                return h;
+            }
+
+            function betaCdf(x, a, b) {
+                if (x <= 0) return 0;
+                if (x >= 1) return 1;
+                const bt = Math.exp(lgamma(a + b) - lgamma(a) - lgamma(b) + a * Math.log(x) + b * Math.log(1 - x));
+                return x < (a + 1) / (a + b + 2) ? bt * betacf(a, b, x) / a : 1 - bt * betacf(b, a, 1 - x) / b;
+            }
+
+            /* ---------- datasets ---------- */
+            const AX = [10, 8, 13, 9, 11, 14, 6, 4, 12, 7, 5];
+            const DS = {
+                an1: { name: 'Anscombe I', x: AX, y: [8.04, 6.95, 7.58, 8.81, 8.33, 9.96, 7.24, 4.26, 10.84, 4.82, 5.68] },
+                an2: { name: 'Anscombe II', x: AX, y: [9.14, 8.14, 8.74, 8.77, 9.26, 8.10, 6.13, 3.10, 9.13, 7.26, 4.74] },
+                an3: { name: 'Anscombe III', x: AX, y: [7.46, 6.77, 12.74, 7.11, 7.81, 8.84, 6.08, 5.39, 8.15, 6.42, 5.73] },
+                an4: { name: 'Anscombe IV', x: [8, 8, 8, 8, 8, 8, 8, 19, 8, 8, 8], y: [6.58, 5.76, 7.71, 8.84, 8.47, 7.04, 5.25, 12.50, 5.56, 7.91, 6.89] }
+            };
+
+            (function () {                       // synthetic data with a fixed seed (reproducible)
+                let seed = 12345;
+                const rnd = () => (seed = (seed * 1664525 + 1013904223) % 4294967296) / 4294967296;
+                const x = [], y = [];
+                for (let i = 0; i < 30; i++) {
+                    const xi = 10 * rnd();
+                    let noise = -6;
+                    for (let k = 0; k < 12; k++) noise += rnd();
+                    x.push(+xi.toFixed(2)); y.push(+(2 + 0.8 * xi + 1.5 * noise).toFixed(2));
+                }
+                DS.lin = { name: 'Synthetic: hours of training (x) vs test score (y), 30 people', x, y };
+                const xq = Array.from({ length: 25 }, (_, i) => -3 + 0.25 * i);
+                DS.quad = { name: 'Perfect parabola y = x² on [−3, 3]', x: xq, y: xq.map(v => v * v) };
+            })();
+
+            function getData() {
+                const key = $('ds').value;
+                if (key === 'gen') {
+                    const n = Math.min(2000, Math.max(5, +$('gn').value || 100)), rho = Math.min(1, Math.max(-1, +$('grho').value || 0));
+                    const x = [], y = [];
+                    for (let i = 0; i < n; i++) {
+                        const z1 = randn(), z2 = randn();
+                        x.push(50 + 10 * z1);
+                        y.push(50 + 10 * (rho * z1 + Math.sqrt(1 - rho * rho) * z2));
+                    }
+                    return { name: `Generated bivariate normal, n = ${n}, ρ = ${rho}`, x, y };
+                }
+                if (key === 'custom') {
+                    let lines = $('raw').value.split(/\r?\n/).map(l => l.trim()).filter(l => l);
+                    if ($('hdr').checked) lines = lines.slice(1);
+                    const pts = lines.map(l => l.split(/[,;\t ]+/).map(Number)).filter(p => p.length >= 2 && isFinite(p[0]) && isFinite(p[1]));
+                    return { name: `Custom data (${pts.length} points)`, x: pts.map(p => p[0]), y: pts.map(p => p[1]) };
+                }
+                return DS[key];
+            }
+
+            /* ---------- statistics ---------- */
+            function stats(x, y) {
+                const n = x.length;
+                const mx = x.reduce((a, b) => a + b, 0) / n, my = y.reduce((a, b) => a + b, 0) / n;
+                let Sxx = 0, Syy = 0, Sxy = 0;
+                for (let i = 0; i < n; i++) { Sxx += (x[i] - mx) ** 2; Syy += (y[i] - my) ** 2; Sxy += (x[i] - mx) * (y[i] - my); }
+                const r = Sxy / Math.sqrt(Sxx * Syy);
+                const byx = Sxy / Sxx, bxy = Sxy / Syy;
+                return { n, mx, my, Sxx, Syy, Sxy, r, byx, bxy, ayx: my - byx * mx, axy: mx - bxy * my };
+            }
+
+            const corr = (x, y) => stats(x, y).r;
+
+            /* ---------- plot ---------- */
+            function plot(cv, x, y, s, mode) {
+                const ctx = cv.getContext('2d');
+                const W = cv.width, H = cv.height, L = 55, R = 15, T = 15, B = 35;
+                let x0 = Math.min(...x), x1 = Math.max(...x), y0 = Math.min(...y), y1 = Math.max(...y);
+                const px = (x1 - x0) * 0.08 || 1, py = (y1 - y0) * 0.08 || 1;
+                x0 -= px; x1 += px; y0 -= py; y1 += py;
+                const X = v => L + (v - x0) / (x1 - x0) * (W - L - R), Y = v => T + (y1 - v) / (y1 - y0) * (H - T - B);
+
+                ctx.clearRect(0, 0, W, H);
+                ctx.font = '11px Arial'; ctx.fillStyle = '#6b5a8f'; ctx.strokeStyle = '#e9e1fb';
+                for (let k = 0; k <= 5; k++) {
+                    const xv = x0 + (x1 - x0) * k / 5, yv = y0 + (y1 - y0) * k / 5;
+                    ctx.beginPath(); ctx.moveTo(X(xv), T); ctx.lineTo(X(xv), H - B); ctx.stroke();
+                    ctx.beginPath(); ctx.moveTo(L, Y(yv)); ctx.lineTo(W - R, Y(yv)); ctx.stroke();
+                    ctx.textAlign = 'center'; ctx.fillText(g(+xv.toPrecision(3)), X(xv), H - 15);
+                    ctx.textAlign = 'right'; ctx.fillText(g(+yv.toPrecision(3)), L - 6, Y(yv) + 4);
+                }
+                ctx.textAlign = 'center'; ctx.fillText('x', (L + W - R) / 2, H - 2);
+
+                ctx.save();
+                ctx.beginPath(); ctx.rect(L, T, W - L - R, H - T - B); ctx.clip();
+
+                // residual segments
+                if (mode !== 'none') {
+                    ctx.strokeStyle = mode === 'v' ? 'rgba(91,33,182,0.45)' : 'rgba(220,38,38,0.45)';
+                    x.forEach((xi, i) => {
+                        ctx.beginPath(); ctx.moveTo(X(xi), Y(y[i]));
+                        if (mode === 'v') ctx.lineTo(X(xi), Y(s.ayx + s.byx * xi)); else ctx.lineTo(X(s.axy + s.bxy * y[i]), Y(y[i]));
+                        ctx.stroke();
+                    });
+                }
+
+                // regression line of Y on X
+                ctx.lineWidth = 2; ctx.strokeStyle = '#5b21b6';
+                ctx.beginPath(); ctx.moveTo(X(x0), Y(s.ayx + s.byx * x0)); ctx.lineTo(X(x1), Y(s.ayx + s.byx * x1)); ctx.stroke();
+
+                // regression line of X on Y, drawn as y = (x - a_xy)/b_xy (vertical if r = 0)
+                ctx.strokeStyle = '#dc2626';
+                ctx.beginPath();
+                if (Math.abs(s.r) < 1e-12) { ctx.moveTo(X(s.mx), Y(y0)); ctx.lineTo(X(s.mx), Y(y1)); }
+                else { ctx.moveTo(X(x0), Y((x0 - s.axy) / s.bxy)); ctx.lineTo(X(x1), Y((x1 - s.axy) / s.bxy)); }
+                ctx.stroke();
+                ctx.lineWidth = 1;
+
+                // points and mean
+                ctx.fillStyle = '#0891b2';
+                x.forEach((xi, i) => { ctx.beginPath(); ctx.arc(X(xi), Y(y[i]), x.length > 300 ? 2 : 4, 0, 7); ctx.fill(); });
+                ctx.strokeStyle = '#111'; ctx.lineWidth = 2;
+                ctx.beginPath(); ctx.arc(X(s.mx), Y(s.my), 8, 0, 7); ctx.stroke();
+                ctx.restore();
+            }
+
+            /* ---------- main computation ---------- */
+            function run() {
+                const D = getData();
+                if (!D || D.x.length < 3) { $('ds-info').innerHTML = '<code>At least 3 points are needed.</code>'; return; }
+                const x = D.x, y = D.y, s = stats(x, y), n = s.n;
+                if (!(s.Sxx > 0 && s.Syy > 0)) { $('ds-info').innerHTML = '<code>x or y is constant: the correlation is undefined.</code>'; return; }
+                $('ds-info').innerHTML = `<strong>${D.name}</strong>`;
+
+                plot($('cv'), x, y, s, $('resid').value);
+
+                table('t-sum', ['n', 'x̄', 'ȳ', 's<sub>x</sub>', 's<sub>y</sub>', 's<sub>xy</sub>', 'r'],
+                    [[n, g(s.mx), g(s.my), g(Math.sqrt(s.Sxx / (n - 1))), g(Math.sqrt(s.Syy / (n - 1))), g(s.Sxy / (n - 1)), g(s.r)]]);
+
+                $('lines').innerHTML =
+                    `<p><strong>Y on X:</strong> b<sub>yx</sub> = S<sub>xy</sub>/S<sub>xx</sub> = ${g(s.byx)}, a<sub>yx</sub> = ȳ − b<sub>yx</sub>x̄ = ${g(s.ayx)} &nbsp;⇒&nbsp; <code>ŷ = ${g(s.ayx)} + ${g(s.byx)}·x</code></p>` +
+                    `<p><strong>X on Y:</strong> b<sub>xy</sub> = S<sub>xy</sub>/S<sub>yy</sub> = ${g(s.bxy)}, a<sub>xy</sub> = x̄ − b<sub>xy</sub>ȳ = ${g(s.axy)} &nbsp;⇒&nbsp; <code>x̂ = ${g(s.axy)} + ${g(s.bxy)}·y</code></p>`;
+
+                // verification
+                const prod = s.byx * s.bxy, gm = Math.sign(s.r) * Math.sqrt(prod);
+                const resY = x.map((xi, i) => y[i] - s.ayx - s.byx * xi), resX = y.map((yi, i) => x[i] - s.axy - s.bxy * yi);
+                const sum = a => a.reduce((p, q) => p + q, 0);
+                const SSE = sum(resY.map(e => e * e)), SST = s.Syy;
+                // normal equations solved with Cramer's rule (textbook formulas)
+                const Sx = sum(x), Sy = sum(y), Sxx2 = sum(x.map(v => v * v)), Sxy2 = sum(x.map((v, i) => v * y[i]));
+                const Dt = n * Sxx2 - Sx * Sx, bC = (n * Sxy2 - Sx * Sy) / Dt, aC = (Sy * Sxx2 - Sx * Sxy2) / Dt;
+
+                table('t-ver', ['Check', 'Value 1', 'Value 2', 'Difference'], [
+                    ['b<sub>yx</sub>·b<sub>xy</sub>  vs  r²', g(prod), g(s.r * s.r), g(prod - s.r * s.r)],
+                    ['sign(r)·√(b<sub>yx</sub>·b<sub>xy</sub>)  (geometric mean)  vs  r', g(gm), g(s.r), g(gm - s.r)],
+                    ['Normal equations (Cramer): b  vs  S<sub>xy</sub>/S<sub>xx</sub>', g(bC), g(s.byx), g(bC - s.byx)],
+                    ['Normal equations (Cramer): a  vs  ȳ − b x̄', g(aC), g(s.ayx), g(aC - s.ayx)],
+                    ['Residuals of Y on X: Σeᵢ  (should be 0)', g(sum(resY)), '0', ''],
+                    ['Residuals of Y on X: Σxᵢeᵢ  (should be 0)', g(sum(resY.map((e, i) => e * x[i]))), '0', ''],
+                    ['Residuals of X on Y: Σfᵢ and Σyᵢfᵢ  (should be 0)', g(sum(resX)), g(sum(resX.map((e, i) => e * y[i]))), ''],
+                    ['SSE of Y on X  vs  S<sub>yy</sub>(1 − r²)', g(SSE), g(SST * (1 - s.r * s.r)), g(SSE - SST * (1 - s.r * s.r))],
+                    ['R² = 1 − SSE/SST  vs  r²', g(1 - SSE / SST), g(s.r * s.r), g(1 - SSE / SST - s.r * s.r)]
+                ]);
+
+                // perturbation of (a, b)
+                const sse = (a, b) => sum(x.map((xi, i) => (y[i] - a - b * xi) ** 2));
+                const da = 0.1 * Math.sqrt(s.Syy / (n - 1)), db = 0.1 * Math.sqrt(s.Syy / s.Sxx);
+                const base = sse(s.ayx, s.byx);
+                table('t-pert', ['(a, b)', 'S(a, b)', 'S − S(minimum)'],
+                    [['optimum (a<sub>yx</sub>, b<sub>yx</sub>)', g(base), '0'],
+                        ['(a + δ<sub>a</sub>, b)', g(sse(s.ayx + da, s.byx)), g(sse(s.ayx + da, s.byx) - base)],
+                        ['(a − δ<sub>a</sub>, b)', g(sse(s.ayx - da, s.byx)), g(sse(s.ayx - da, s.byx) - base)],
+                        ['(a, b + δ<sub>b</sub>)', g(sse(s.ayx, s.byx + db)), g(sse(s.ayx, s.byx + db) - base)],
+                        ['(a, b − δ<sub>b</sub>)', g(sse(s.ayx, s.byx - db)), g(sse(s.ayx, s.byx - db) - base)]]);
+
+                // inference on r
+                const df = n - 2, tt = s.r * Math.sqrt(df / (1 - s.r * s.r));
+                const pv = Math.abs(s.r) >= 1 ? 0 : betaCdf(df / (df + tt * tt), df / 2, 0.5);
+                let ci = '—';
+                if (n > 3 && Math.abs(s.r) < 1) { const z = Math.atanh(s.r), h = 1.96 / Math.sqrt(n - 3); ci = `[${Math.tanh(z - h).toFixed(3)}, ${Math.tanh(z + h).toFixed(3)}]`; }
+                table('t-inf', ['Quantity', 'Value'], [
+                    ['t = r√((n − 2)/(1 − r²)), df = n − 2', `${g(tt)}, df = ${df}`],
+                    ['two-sided p-value for H₀: ρ = 0', pv < 1e-4 ? pv.toExponential(2) : pv.toFixed(4)],
+                    ['95% confidence interval for ρ (Fisher z)', ci]
+                ]);
+
+                $('comment').innerHTML = (Math.abs(s.r) < 0.1
+                    ? 'The linear correlation is close to zero: the two regression lines are almost perpendicular (one nearly horizontal, the other nearly vertical). This does <strong>not</strong> exclude a non-linear dependence: look at the plot.'
+                    : `|r| = ${Math.abs(s.r).toFixed(3)}: the linear relation explains ${(100 * s.r * s.r).toFixed(1)}% of the variance of y; the two lines ${Math.abs(s.r) > 0.99 ? 'almost coincide' : 'form a "scissors" opening that closes as |r| → 1'}.`) +
+                    ' Anscombe I–IV have the same r (≈ 0.816) and the same line (ŷ ≈ 3 + 0.5x), but the plots are totally different: always look at the data.';
+            }
+
+            /* ---------- simulation: independence and correlation ---------- */
+            $('b-sim').onclick = () => {
+                const m = 2000, rows = [];
+                const sd = a => { const mu = a.reduce((s, v) => s + v, 0) / a.length; return Math.sqrt(a.reduce((s, v) => s + (v - mu) ** 2, 0) / (a.length - 1)); };
+                const mean = a => a.reduce((s, v) => s + v, 0) / a.length;
+                $('t-sim').innerHTML = '<tbody><tr><td>Simulating...</td></tr></tbody>';
+                setTimeout(() => {
+                    [5, 10, 30, 100, 1000].forEach(n => {
+                        const rI = [], rQ = [], rA = [];
+                        for (let t = 0; t < m; t++) {
+                            const x = [], y = [], u = [], q = [], a = [];
+                            for (let i = 0; i < n; i++) {
+                                const v = randn();
+                                x.push(randn()); y.push(randn());       // independent pair (x, y)
+                                u.push(v); q.push(v * v); a.push(Math.abs(v));   // dependent pair (X, X²)
+                            }
+                            rI.push(corr(x, y));
+                            rQ.push(corr(u, q));
+                            rA.push(corr(a, q));
+                        }
+                        rows.push([n, mean(rI).toFixed(4), sd(rI).toFixed(4), (1 / Math.sqrt(n - 1)).toFixed(4), mean(rQ).toFixed(4), sd(rQ).toFixed(4), mean(rA).toFixed(3)]);
+                    });
+                    table('t-sim', ['n', 'mean r, X and Y independent', 'sd of r', 'theory 1/√(n−1)', 'mean r(X, X²)', 'sd of r(X, X²)', 'mean r(|X|, X²)'], rows);
+                }, 30);
+            };
+
+            $('b-run').onclick = run;
+            $('ds').onchange = run;
+            $('resid').onchange = run;
+            run();
+        </script>
+    </body>
+</html>
